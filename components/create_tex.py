@@ -1,12 +1,15 @@
 from textwrap import dedent
-
+from random import randint
 MILLION = 7
 
 
 def create_all_tex(template):
+    style = template.styles[randint(0,len(template.styles)-1)]
+    parameter = template.parameters[randint(0,len(template.parameters)-1)]
+    
     all_tex = []
     for category in template.CATEGORIES:
-        all_tex.append(create_tex(template, category))
+        all_tex.append(create_tex(template, style, parameter, category))
     return all_tex
 
 def create_tex(template, category):

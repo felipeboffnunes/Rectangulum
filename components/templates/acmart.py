@@ -3,13 +3,12 @@ from components.tex_template import TexTemplate
 class ACMART(TexTemplate):
 
     def __init__(self, master=TexTemplate):
-        self.styles = ['acmsmall', 'acmlarge', 'acmtog', \
-            'acmconf', 'sigchi', 'sigchi-a', 'sigplan']
+        self.styles = ["acmsmall", "acmlarge", "acmtog", \
+            "acmconf", "sigchi", "sigchi-a", "sigplan"]
         
-        self.parameters = ['anonymous', 'review', \
-            'authorversion', 'screen', 'authordraft']
+        self.parameters = ["anonymous", "review", \
+            "authorversion", "screen", "authordraft"]
 
-        self.random = master.get_random(master)
         self.CATEGORIES = master.get_categories(master)
         # Here you can edit the categories
         #
@@ -20,12 +19,12 @@ class ACMART(TexTemplate):
         # self.CATEGORIES.remove("subtitle")
         
 
-    def create_documentclass(self, category) -> str:
-        style = self.styles[self.random.randint(0,len(self.styles)-1)]
-        parameter = self.parameters[self.random.randint(0,len(self.parameters)-1)]
+    def create_documentclass(self, style, parameter, category) -> str:
         content = f"""
-        \\documentclass[{style, parameter}]{{acmart_{category}}}
+        \\documentclass[{style}, {parameter}]{{acmart_{category}}}
         """
+        print(content)
+        input()
         return content
 
     def create_begin_document(self) -> str:

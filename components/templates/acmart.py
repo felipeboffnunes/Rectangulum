@@ -10,12 +10,13 @@ class ACMART(TexTemplate):
             'authorversion', 'screen', 'authordraft']
 
         self.random = master.get_random(master)
+        
 
-    def create_documentclass(self) -> str:
+    def create_documentclass(self, category) -> str:
         style = self.styles[self.random.randint(0,len(self.styles)-1)]
         parameter = self.parameters[self.random.randint(0,len(self.parameters)-1)]
         content = f"""
-        \\documentclass[{style}]{{{parameter}}}
+        \\documentclass[{style, parameter}]{{acmart_{category}}}
         """
         return content
 

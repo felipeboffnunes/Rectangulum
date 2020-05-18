@@ -11,7 +11,7 @@ class TexTemplate(object):
         return random
 
     @abstractmethod
-    def create_documentclass(self) -> str:
+    def create_documentclass(self, category) -> str:
         pass
 
     @abstractmethod

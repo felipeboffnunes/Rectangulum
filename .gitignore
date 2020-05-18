@@ -1,5 +1,12 @@
 __pycache__/
+
 build/
 dist/
 rectangulum.egg-info/
+
 *.tex
+*.pdf
+*.json
+*.log
+*.aux
+*.out

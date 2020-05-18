@@ -13,10 +13,12 @@ class ACMART(TexTemplate):
         # Here you can edit the categories
         #
         # Add categories specific from this template
-        # self.CATEGORIES.append("ccs")
+        # self.CATEGORIES.append(["ccs", 1])
+        # self.CATEGORIES.append(["ccs-title", 1])
         #
         # Delete default categories this template does not support
-        # self.CATEGORIES.remove("subtitle")
+        # self.CATEGORIES.remove(["images", "n"])
+        # self.CATEGORIES.remove(["images-dec", "n"])
         
 
     def create_documentclass(self, style, parameter, category=None) -> str:

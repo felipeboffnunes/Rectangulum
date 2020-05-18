@@ -1,9 +1,9 @@
 from abc import ABCMeta, abstractmethod
 import random
 
-CATEGORIES = ["title", "subtitle", "aux_text", \
-            "section-title", "text", "images", "tables", \
-            "authors", "references", "images_desc", "tables-desc"]
+CATEGORIES = [["title", 1], ["subtitle", 1], ["aux_text", "n"], \
+            ["section-title", "n"], ["text", "n"], ["images", "n"], ["tables", "n"], \
+            ["authors", "n"], ["references", "n"], ["images_desc", "n"], ["tables-desc", "n"]]
 
 class TexTemplate(object):
     __metaclass__ = ABCMeta

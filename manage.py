@@ -37,12 +37,12 @@ def main(n, b):
         # we need to create each pdf with only
         # category with black boxes
         for idx, tex_categories in zip(batch_ids, batch_texs):
-            # tex_categories = [tex, category]
+            # tex_categories = [tex, category, n_box]
 
             with tempfile.TemporaryDirectory() as path:
                 os.chdir(path)
                 tex_names = list(map( \
-                    lambda tex_category : download_tex(idx, tex_category[0], tex_category[1]), tex_categories \
+                    lambda tex_category : download_tex(idx, tex_category[0], tex_category[1], tex_category[2]), tex_categories \
                     ))
 
                 tex_paths = list(map( \
@@ -72,8 +72,9 @@ def main(n, b):
                                 pass
                         elif ".pdf" in f.name:
                             pages = convert_from_path(f.path, output_folder=path)
-                            category = re.search("_(.*?)\.pdf", f.name).group(1)
-                            idx = re.search("\d*", f.name).group(0)
+                            category = re.search("_(.*?)_\d*\.pdf$", f.name).group(1)
+                            n_box = re.search("_(\d*?).pdf$", f.name).group(1)     
+                            idx = re.search("^\d*", f.name).group(0)
 
                             # Little hack
                             # I don't know why, but I can't use the map(detect_shapes)
@@ -81,9 +82,22 @@ def main(n, b):
                             os.chdir(ORIGINAL_PATH)
                             coordinates = list(map(lambda page : detect_shapes(page, visual=True), pages))
 
-                            json.update({idx : {category : coordinates}})
+                            # Delete the smallest boxes
+                            bigger = []
+                            for i, coordinate in enumerate(coordinates[0]):
+                                x, y, w, h = coordinate
+                                area = w * h
+                                bigger.append([area, i])
+                            bigger.sort(reverse=True)
+                            bigger = bigger[:int(n_box)]
+                            filtered_coordinates = []
+                            for box in bigger:
+                                filtered_coordinates.append(coordinates[0][box[1]])
 
-
+                            json.update({idx : {category : filtered_coordinates}})
+                            for i in json:
+                                print(i, json[i])
+                            input()
 
 
 if __name__ == "__main__":

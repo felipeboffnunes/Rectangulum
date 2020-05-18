@@ -8,12 +8,12 @@ def create_all_tex(template):
     parameter = template.parameters[randint(0,len(template.parameters)-1)]
     
     # First create_tex is the original tex, without categories
-    all_tex = [[create_tex(template, style, parameter), "original"]]
-    for category in template.CATEGORIES:
-        all_tex.append([create_tex(template, style, parameter, category), category])
+    all_tex = [[create_tex(template, style, parameter), "original", "1"]]
+    for category, n_box in template.CATEGORIES:
+        all_tex.append([create_tex(template, style, parameter, category, n_box), category, n_box])
     return all_tex
 
-def create_tex(template, style, parameter, category=None):
+def create_tex(template, style, parameter, category = None, n_box = None):
     # Needs dinamic logic
     layout = ""
     if category == None:
@@ -26,9 +26,9 @@ def create_tex(template, style, parameter, category=None):
     layout += dedent(template.create_end_document())
     return layout
 
-def download_tex(idx, tex, category): 
+def download_tex(idx, tex, category, n_box): 
     zeros = "0" * (MILLION - len(str(idx)))
-    name = f"{zeros}{idx}_{category}.tex"
+    name = f"{zeros}{idx}_{category}_{n_box}.tex"
     with open(name, "w") as f:
         f.write(tex)
         return name

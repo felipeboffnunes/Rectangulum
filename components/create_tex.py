@@ -1,8 +1,9 @@
 from textwrap import dedent
+MILLION = 7
 
 def create_tex(template):
-    layout = f""""""
 
+    layout = ""
     layout += dedent(template.create_documentclass())
     layout += dedent(template.create_begin_document())
     layout += dedent(template.create_title())
@@ -12,5 +13,6 @@ def create_tex(template):
     return layout
 
 def download_tex(idx, tex):
-    with open(f"{idx}.tex", "w") as f:
+    zeros = "0" * (MILLION - len(str(idx)))
+    with open(f"{zeros}{idx}.tex", "w") as f:
         f.write(tex)

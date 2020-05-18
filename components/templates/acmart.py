@@ -10,6 +10,14 @@ class ACMART(TexTemplate):
             'authorversion', 'screen', 'authordraft']
 
         self.random = master.get_random(master)
+        self.CATEGORIES = master.get_categories(master)
+        # Here you can edit the categories
+        #
+        # Add categories specific from this template
+        # self.CATEGORIES.append("ccs")
+        #
+        # Delete default categories this template does not support
+        # self.CATEGORIES.remove("subtitle")
         
 
     def create_documentclass(self, category) -> str:

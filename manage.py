@@ -46,7 +46,8 @@ def main(n, b):
             tex_names = list(map( \
                 lambda tex_category : download_tex(idx, tex_category[0], tex_category[1]), tex_categories \
                 ))
-            
+            print(tex_names)
+            input()
             tex_paths = list(map( \
                 lambda tex_name : f"{TMP_TEX_PATH}\\{tex_name}", tex_names \
                 ))

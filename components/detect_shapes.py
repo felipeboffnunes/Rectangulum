@@ -11,7 +11,7 @@ def detect_shapes(pil_image):
     # Blur the image
     blur = cv2.GaussianBlur(thresh_inv,(1,1),0)
 
-    thresh = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)[1]
+    thresh = cv2.threshold(blur, 0, 100, cv2.THRESH_BINARY+cv2.THRESH_OTSU)[1]
 
     # find contours
     contours = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]

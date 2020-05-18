@@ -12,3 +12,4 @@ rectangulum.egg-info/
 *.out
 *.fdb_latexmk
 *.fls
+*.gz

@@ -2,6 +2,7 @@
 import argparse
 import tempfile
 import os
+import re
 # Libraries
 from pdf2image import convert_from_path
 # Components
@@ -38,46 +39,51 @@ def main(n, b):
         for idx, tex_categories in zip(batch_ids, batch_texs):
             # tex_categories = [tex, category]
 
-            # NEEDS TO CHANGE TMP DIRS TO REAL TMP DIRS!
-            # with tempfile.TemporaryDirectory() as path:
+            with tempfile.TemporaryDirectory() as path:
+                os.chdir(path)
+                tex_names = list(map( \
+                    lambda tex_category : download_tex(idx, tex_category[0], tex_category[1]), tex_categories \
+                    ))
 
-            # Go to /data/tmp_tex and create texs
-            os.chdir(TMP_TEX_PATH)
-            tex_names = list(map( \
-                lambda tex_category : download_tex(idx, tex_category[0], tex_category[1]), tex_categories \
-                ))
-            print(tex_names)
-            input()
-            tex_paths = list(map( \
-                lambda tex_name : f"{TMP_TEX_PATH}\\{tex_name}", tex_names \
-                ))
-        
-            # Go to /data/template_src/{template}/ and create PDFs
-            os.chdir(TEMPLATE_PATH)
-            list(map(create_pdf, tex_paths))
-
+                tex_paths = list(map( \
+                    lambda tex_name : f"{path}\\{tex_name}", tex_names \
+                    ))
             
-            # Move the original tex to /results/tex folder
-            try:
-                os.rename(tex_paths[0], f"{TEX_PATH}\\{tex_names[0]}".replace("_original", ""))
-            except:
-                pass
-            for tex_path in tex_paths[1:]:
-                os.remove(tex_path)
+                # Go to /data/template_src/{template}/ and create PDFs
+                os.chdir(TEMPLATE_PATH)
+                list(map(lambda tex_path: create_pdf(tex_path, path), tex_paths))
+                os.chdir(path)
+                
+                # Move the original tex to /results/tex folder
+                try:
+                    os.rename(tex_paths[0], f"{path}\\{tex_names[0]}".replace("_original", ""))
+                except:
+                    pass
 
-            # Split PDFs into individual pages
-            with os.scandir(TMP_PDF_PATH) as pdfs:
-                for pdf in pdfs:
-                    if "_original" in pdf.name:
-                        # Move the original pdf to /results/pdf folder
-                        try:
-                            os.rename(pdf.path, f"{PDF_PATH}\\{pdf.name}".replace("_original", ""))
-                        except:
-                            pass
-                    else:
-                        with tempfile.TemporaryDirectory() as path:
-                            pages = convert_from_path(pdf.path, output_folder=path)
-                            list(map(detect_shapes, pages))
+                json = {}
+                # Split PDFs into individual pages
+                with os.scandir(path) as files:
+                    for f in files:
+                        if "_original.pdf" in f.name:
+                            # Move the original pdf to /results/pdf folder
+                            try:
+                                os.rename(f.path, f"{PDF_PATH}\\{f.name}".replace("_original", ""))
+                            except:
+                                pass
+                        elif ".pdf" in f.name:
+                            pages = convert_from_path(f.path, output_folder=path)
+                            category = re.search("_(.*?)\.pdf", f.name).group(1)
+                            idx = re.search("\d*", f.name).group(0)
+
+                            # Little hack
+                            # I don't know why, but I can't use the map(detect_shapes)
+                            # inside the temporary directory
+                            os.chdir(ORIGINAL_PATH)
+                            coordinates = list(map(lambda page : detect_shapes(page, visual=True), pages))
+
+                            json.update({idx : {category : coordinates}})
+
+
 
 
 if __name__ == "__main__":

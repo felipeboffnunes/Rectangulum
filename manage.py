@@ -35,7 +35,7 @@ def main(n, b):
         # Title, Subtitle, Tables...
         # To receive the separate coordinates
         # we need to create each pdf with only
-        # category with black boxes
+        # one category with black boxes
         for idx, tex_categories in zip(batch_ids, batch_texs):
             # tex_categories = [tex, category, n_box]
 
@@ -69,9 +69,11 @@ def main(n, b):
                             try:
                                 os.rename(f.path, f"{PDF_PATH}\\{f.name}".replace("_original", ""))
                             except:
-                                pass
+                                os.remove(f.path)            
                         elif ".pdf" in f.name:
+                            # Tranforms PDFs in separate pages as PIL Images
                             pages = convert_from_path(f.path, output_folder=path)
+
                             category = re.search("_(.*?)_\d*\.pdf$", f.name).group(1)
                             n_box = re.search("_(\d*?).pdf$", f.name).group(1)     
                             idx = re.search("^\d*", f.name).group(0)
@@ -80,7 +82,10 @@ def main(n, b):
                             # I don't know why, but I can't use the map(detect_shapes)
                             # inside the temporary directory
                             os.chdir(ORIGINAL_PATH)
-                            coordinates = list(map(lambda page : detect_shapes(page, visual=True), pages))
+                            # Use detect_shapes(page, visual=True)
+                            # to see the bounding boxes found
+                            coordinates = list(map(lambda page : detect_shapes(page, visual=False), pages))
+                            os.chdir(path)
 
                             # Delete the smallest boxes
                             bigger = []

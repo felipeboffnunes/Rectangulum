@@ -14,7 +14,7 @@ def create_all_tex(template):
     return all_tex
 
 def create_tex(template, style, parameter, category = None, n_box = None):
-    # Needs dinamic logic
+    # Needs dynamic logic
     layout = ""
     if category == None:
         layout += dedent(template.create_documentclass(style, parameter))

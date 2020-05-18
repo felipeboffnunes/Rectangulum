@@ -1,6 +1,6 @@
 import argparse
 from components.select_layout import select_layout
-from components.templates.acmart import ACMART
+from components.create_tex import create_tex, download_tex
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -13,3 +13,6 @@ if __name__ == "__main__":
 
     ids = list(range(int(args.n)))
     layouts = list(map(select_layout, ids))
+    texs = list(map(create_tex, layouts))
+    list(map(download_tex, ids, texs))
+    

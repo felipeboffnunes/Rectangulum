@@ -1,8 +1,8 @@
-import abc
+from abc import ABCMeta, abstractmethod
 import random
 
 class TexTemplate(object):
-    __metaclass__ = abc.ABCMeta
+    __metaclass__ = ABCMeta
     
     def __init__(self):
         pass
@@ -10,12 +10,24 @@ class TexTemplate(object):
     def get_random(self):
         return random
 
-    @abc.abstractmethod
+    @abstractmethod
     def create_documentclass(self) -> str:
         pass
 
-    @abc.abstractmethod
+    @abstractmethod
+    def create_begin_document(self) -> str:
+        pass
+
+    @abstractmethod
+    def create_maketitle(self) -> str:
+        pass
+
+    @abstractmethod
     def create_title(self) -> str:
-        return
+        pass
+
+    @abstractmethod
+    def create_end_document(self) -> str:
+        pass
 
     

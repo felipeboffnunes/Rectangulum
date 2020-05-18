@@ -1,2 +1,9 @@
+from components.templates.acmart import ACMART
+
 def select_layout(idx):
-    pass
+    template = ACMART()
+    return template
+
+   
+    
+    

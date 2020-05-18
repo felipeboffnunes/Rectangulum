@@ -11,21 +11,34 @@ class ACMART(TexTemplate):
 
         self.random = master.get_random(master)
 
-
-
     def create_documentclass(self) -> str:
         content = f"""
-        \\documentclass[
-            {self.styles[self.random.randint(0,len(self.styles))]}
-        ]{{
-            {self.parameters[self.random.randint(0,len(self.parameters))]}
-        }}
+        \documentclass[{self.styles[self.random.randint(0,len(self.styles)-1)]}]\
+        {{{self.parameters[self.random.randint(0,len(self.parameters)-1)]}}}
+        """.replace(" ", "")
+        return content
+
+    def create_begin_document(self) -> str:
+        content = f"""
+        \\begin{{document}}
+        """
+        return content
+
+    def create_maketitle(self) -> str:
+        content = f"""
+        \\maketitle
         """
         return content
 
     def create_title(self) -> str:
         content = f"""
-        Example Title
+        \\title{{Example Title}}
         """
         return content
 
+    def create_end_document(self) -> str:
+        content = f"""
+        \\end{{document}}
+        \\endinput
+        """
+        return content

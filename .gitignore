@@ -10,3 +10,5 @@ rectangulum.egg-info/
 *.log
 *.aux
 *.out
+*.fdb_latexmk
+*.fls

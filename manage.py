@@ -13,9 +13,9 @@ def main(n, b):
     texs = list(map(create_all_tex, layouts))
 
     ORIGINAL_PATH = os.getcwd()
-    TMP_TEX = "\\tmp_tex"
-    TMP_TEX_PATH = f"{ORIGINAL_PATH}{TMP_TEX}"
-    TEMPLATE_PATH = "\\data\\template_src\\acm"
+    TMP_TEX_PATH = f"{ORIGINAL_PATH}\\data\\tmp_tex"
+    TEMPLATE_PATH = f"{ORIGINAL_PATH}\\data\\template_src\\acm"
+    TEX_PATH = f"{ORIGINAL_PATH}\\results\\tex"
 
     # Batch iteration
     iterations = n//b
@@ -30,17 +30,22 @@ def main(n, b):
         # we need to create each pdf with only
         # category with black boxes
         for idx, tex_categories in zip(batch_ids, batch_texs):
+            # tex_categories = [tex, category]
             os.chdir(TMP_TEX_PATH)
             tex_names = list(map( \
-                lambda tex_category : download_tex(idx, tex_category), tex_categories \
+                lambda tex_category : download_tex(idx, tex_category[0], tex_category[1]), tex_categories \
                 ))
             
             tex_paths = list(map( \
                 lambda tex_name : f"{TMP_TEX_PATH}\\{tex_name}", tex_names \
                 ))
         
-            os.chdir(f"{ORIGINAL_PATH}{TEMPLATE_PATH}")
+            os.chdir(TEMPLATE_PATH)
             list(map(create_pdf, tex_paths))
+            # Move the original tex to /results/tex folder
+            os.rename(tex_paths[0], f"{TEX_PATH}{tex_names[0]}".replace("_original", ""))
+            for tex_path in tex_paths[1:]:
+                os.remove(tex_path)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

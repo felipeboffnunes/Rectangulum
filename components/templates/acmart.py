@@ -19,12 +19,15 @@ class ACMART(TexTemplate):
         # self.CATEGORIES.remove("subtitle")
         
 
-    def create_documentclass(self, style, parameter, category) -> str:
-        content = f"""
-        \\documentclass[{style}, {parameter}]{{acmart_{category}}}
-        """
-        print(content)
-        input()
+    def create_documentclass(self, style, parameter, category=None) -> str:
+        if category == None:
+            content = f"""
+            \\documentclass[{style}, {parameter}]{{acmart}}
+            """
+        else:
+            content = f"""
+            \\documentclass[{style}, {parameter}]{{acmart_{category}}}
+            """
         return content
 
     def create_begin_document(self) -> str:

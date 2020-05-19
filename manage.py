@@ -1,6 +1,7 @@
 # Python Standard Libraries
 import argparse
 import tempfile
+import json
 import os
 import re
 # Libraries
@@ -23,6 +24,7 @@ def main(n, b):
     TEMPLATE_PATH = f"{ORIGINAL_PATH}\\data\\template_src\\acm"
     TEX_PATH = f"{ORIGINAL_PATH}\\results\\tex"
     PDF_PATH = f"{ORIGINAL_PATH}\\results\\pdf"
+    JSON_PATH = f"{ORIGINAL_PATH}\\results\\json"
 
     # Batch iteration
     iterations = n//b
@@ -60,24 +62,23 @@ def main(n, b):
                 except:
                     pass
 
-                json = {}
+                json_coordinates = {}
                 # Split PDFs into individual pages
                 with os.scandir(path) as files:
-                    for f in files:
-                        if "_original.pdf" in f.name:
+                    for f in files:                    
+                        if "_original" in f.name:
+                            n_box = re.search("_(\d*?).pdf$", f.name).group(1) 
                             # Move the original pdf to /results/pdf folder
                             try:
-                                os.rename(f.path, f"{PDF_PATH}\\{f.name}".replace("_original", ""))
+                                os.rename(f.path, f"{PDF_PATH}\\{f.name}".replace("_original", "").replace(f"_{n_box}", ""))
                             except:
                                 os.remove(f.path)            
                         elif ".pdf" in f.name:
                             # Tranforms PDFs in separate pages as PIL Images
                             pages = convert_from_path(f.path, output_folder=path)
-
+                            n_box = re.search("_(\d*?).pdf$", f.name).group(1) 
                             category = re.search("_(.*?)_\d*\.pdf$", f.name).group(1)
-                            n_box = re.search("_(\d*?).pdf$", f.name).group(1)     
                             idx = re.search("^\d*", f.name).group(0)
-
                             # Little hack
                             # I don't know why, but I can't use the map(detect_shapes)
                             # inside the temporary directory
@@ -85,24 +86,26 @@ def main(n, b):
                             # Use detect_shapes(page, visual=True)
                             # to see the bounding boxes found
                             coordinates = list(map(lambda page : detect_shapes(page, visual=False), pages))
-                            os.chdir(path)
 
                             # Delete the smallest boxes
                             bigger = []
-                            for i, coordinate in enumerate(coordinates[0]):
-                                x, y, w, h = coordinate
-                                area = w * h
-                                bigger.append([area, i])
+                            for z, page in enumerate(coordinates):
+                                for i, coordinate in enumerate(page):
+                                    x, y, w, h = coordinate
+                                    area = w * h
+                                    bigger.append([area, z, i])
                             bigger.sort(reverse=True)
                             bigger = bigger[:int(n_box)]
                             filtered_coordinates = []
                             for box in bigger:
-                                filtered_coordinates.append(coordinates[0][box[1]])
+                                filtered_coordinates.append(coordinates[box[1]][box[2]])
 
-                            json.update({idx : {category : filtered_coordinates}})
-                            for i in json:
-                                print(i, json[i])
-                            input()
+                            json_coordinates.update({idx : {category : filtered_coordinates}})
+                os.chdir(JSON_PATH)
+                with open(f"{idx}.json", "w") as j:
+                    j.write(json.dumps(json_coordinates))
+                           
+                            
 
 
 if __name__ == "__main__":

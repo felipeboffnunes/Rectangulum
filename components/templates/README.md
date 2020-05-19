@@ -25,6 +25,8 @@ flexibility.</p>
 <li>\fbox - Used for one line text boxes</li>
 <li>\begin{framed} - Used for paragraphs, images, tables, etc</li>
 <li>\begin{mdframed} - Same as framed</li>
+<li>\frame - Used for everything, has no padding, but I don't know if it can be edited (so no blank style...)</li>
+ <li>\framebox - Same as frame but with some extra difficulties.</li>
 </ul>
 <p>To create a full boxed pdf you need to wrap the content with those packages. You start first trying to put a box around the content <strong>directly
 from the .tex file</strong>, if the box does not work, it means you have to go to the .cls file, find where that type of content is instantiated,
@@ -130,7 +132,165 @@ enough to actually become two lines, we need to use framed or mdframed then.</p>
       }%
 ```
 
+<h4>An advanced example</h4>
 
+<p>Now we will try to put a box around the authors. We will skip the part where we try to put a box on .tex since by now we already know
+  it won't work (it is definitely formatted by the .cls file). Well, let's search for \@author and see what we get. 27 results...
+  Good, now we go one by one searching for a \def that creates the author in the first page of the pdf.</p>
+<p> We found \def\@author##1{% while searching, this names looks like what we are searching, and it is inside \def\@mkauthors@i{%... bingo! It means @mkauthors is the function that creates the author, and that it also has different versions.</p>
+<p>This is @mkauthors:</p>
 
+```
+\def\@mkauthors{\begingroup
+  \hsize=\textwidth
+  \ifcase\ACM@format@nr
+  \relax % manuscript
+    \@mkauthors@i
+  \or % acmsmall
+    \@mkauthors@i
+  \or % acmlarge
+    \@mkauthors@i
+  \or % acmtog
+    \@mkauthors@i
+  \or % sigconf
+    \@mkauthors@iii
+  \or % siggraph
+    \@mkauthors@iii
+  \or % sigplan
+    \@mkauthors@iii
+  \or % sigchi
+    \@mkauthors@iii
+  \or % sigchi-a
+    \@mkauthors@iv
+  \fi
+  \endgroup
+}
+```
 
+<p>As the first example, it has three versions (i, iii, iv), we have to edit each one of them. Let's see how @mkauthors@iii is:</p>
+
+```
+\def\@mkauthors@iii{%
+  \author@bx@wd=\textwidth\relax
+  \advance\author@bx@wd by -\author@bx@sep\relax
+  \ifnum\@ACM@authorsperrow>0\relax
+    \divide\author@bx@wd by \@ACM@authorsperrow\relax
+  \else
+    \ifcase\num@authorgroups
+    \relax % 0?
+    \or  % 1=one author per row
+    \or  % 2=two authors per row
+       \divide\author@bx@wd by \num@authorgroups\relax
+    \or  % 3=three authors per row
+       \divide\author@bx@wd by \num@authorgroups\relax
+    \or  % 4=two authors per row (!)
+       \divide\author@bx@wd by 2\relax
+    \else % three authors per row
+       \divide\author@bx@wd by 3\relax
+    \fi
+  \fi
+  \advance\author@bx@wd by -\author@bx@sep\relax
+  \gdef\@currentauthors{}%
+  \gdef\@currentaffiliation{}%
+  \def\@author##1{\ifx\@currentauthors\@empty
+    \gdef\@currentauthors{\par##1}%
+  \else
+    \g@addto@macro\@currentauthors{\par##1}%
+  \fi
+  \gdef\and{}}%
+  \def\email##1##2{\ifx\@currentaffiliation\@empty
+    \gdef\@currentaffiliation{\bgroup
+      \mathchardef\UrlBreakPenalty=10000\nolinkurl{##2}\egroup}%
+  \else
+    \g@addto@macro\@currentaffiliation{\par\bgroup
+      \mathchardef\UrlBreakPenalty=10000\nolinkurl{##2}\egroup}%
+  \fi}%
+  \def\affiliation##1##2{\ifx\@currentaffiliation\@empty
+    \gdef\@currentaffiliation{%
+      \setkeys{@ACM@affiliation@}{obeypunctuation=false}%
+      \setkeys{@ACM@affiliation@}{##1}##2}%
+  \else
+    \g@addto@macro\@currentaffiliation{\par
+      \setkeys{@ACM@affiliation@}{obeypunctuation=false}%
+      \setkeys{@ACM@affiliation@}{##1}##2}%
+  \fi
+  \global\let\and\@typeset@author@bx
+}%
+  \hsize=\textwidth
+  \global\setbox\mktitle@bx=\vbox{\noindent
+    \box\mktitle@bx\par\medskip\leavevmode
+    \lineskip=1pc\relax\centering\hspace*{-1em}%
+    \addresses\let\and\@typeset@author@bx\and\par\bigskip}}
+```
+
+<p>Pretty big and full of stuff, oof. But it is where the authors are, so we need to find where to put the box. The answer is this: the authors are in the last line, they are the \addresses and the last author is the last \par on the last line. Why is the last author separated from the others? No clue.</p>
+<p>Now we need to find where addresses gets the authors, let's go straight ahead to it.</p>
+
+```
+ \ifx\addresses\@empty
+    \if@ACM@anonymous
+      \gdef\addresses{\@author{Anonymous Author(s)%
+        \ifx\@acmSubmissionID\@empty\else\\Submission Id:
+          \@acmSubmissionID\fi}}%
+      \gdef\authors{Anonymous Author(s)}%
+    \else
+      \gdef\addresses{\@author{#2}}%
+      \gdef\authors{#2}%
+    \fi
+  \else
+    \if@ACM@anonymous\else
+      \g@addto@macro\addresses{\and\@author{frame{#2}}%
+      \g@addto@macro\authors{\and#2}%
+    \fi
+  \fi
+```
+<p>There are two places where this is getting authors, on \gdef\addresses{\@author{#2}}% and \g@addto@macro\addresses{\and\@author{frame{#2}}%, this is because the authors of the first one come with information taken from another author, so they are dealt differently. There are two different approaches now:</p>
+<ul>
+  <li>Use the package frame for all the authors information, but we will mess with the layout a little bit(as is the case for my attempt) and use it.</li>
+  <li>Use the package frame to only extract the name of the authors, withouth their affiliations, emails, etc.</li>
+</ul>
+<p><strong>Using frame for all info</strong></p>
+
+```
+\if@ACM@anonymous\else
+      \g@addto@macro\addresses{
+      \frame{\and\@author{#2}}
+      }%
+      \g@addto@macro\authors{\and#2}%
+    \fi
+```
+
+<p><strong>Using frame for only names</strong></p>
+
+```
+\ifx\addresses\@empty
+    \if@ACM@anonymous
+      \gdef\addresses{\@author{Anonymous Author(s)%
+        \ifx\@acmSubmissionID\@empty\else\\Submission Id:
+          \@acmSubmissionID\fi}}%
+      \gdef\authors{Anonymous Author(s)}%
+    \else
+      \gdef\addresses{\@author{\frame{#2}}}%
+      \gdef\authors{#2}%
+    \fi
+  \else
+    \if@ACM@anonymous\else
+      \g@addto@macro\addresses{
+      \and\@author{\frame{#2}}
+      }%
+      \g@addto@macro\authors{\and#2}%
+    \fi
+  \fi
+```
+
+<p>If we are using the frame for all info, we also need to edit the last author back in the @mkauthors@iii def, otherwise the approach with only names already gets all authors.</p>
+
+```
+\lineskip=1pc\relax\centering\hspace*{-1em}%
+  \addresses\let\and\@typeset@author@bx
+    \frame{\and\par\bigskip}}}
+```
+
+<p><strong>Which approach to choose?</strong></p>
+<p>We want the most of the information to be inside boxes, so we should try as much as possible to be able to put a box around all the info from the authors. But, we also don't want to mess with the layout too much! The best option for this case is actually to only get the names, not only because it doesn't mess with the layout, but because the authors that use information from other authors appear together, so the number of boxes would be less than the amount of authors, a huge problem if we need to custom code the system for each class.</p>
 

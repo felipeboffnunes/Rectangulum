@@ -3,8 +3,8 @@ from components.tex_template import TexTemplate
 class ACMART(TexTemplate):
 
     def __init__(self, master=TexTemplate):
-        self.styles = ["acmsmall", "acmlarge", "acmtog", \
-            "acmconf", "sigchi", "sigchi-a", "sigplan"]
+        self.styles = ["manuscript", "acmsmall", "acmlarge", "acmtog", \
+            "acmconf", "sigchi", "sigplan"]
         
         self.parameters = ["anonymous", "review", \
             "authorversion", "screen", "authordraft"]

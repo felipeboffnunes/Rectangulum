@@ -1403,9 +1403,9 @@
 \def\@authornotes{}
 \def\authornote#1{%
   \if@ACM@anonymous\else
-    \g@addto@macro\addresses{\tfbox{\@authornotemark}}%
+    \g@addto@macro\addresses{\cfbox{\@authornotemark}}%
     \g@addto@macro\@authornotes{%
-      \stepcounter{footnote}\footnotetext{\tfbox{#1}}}%
+      \stepcounter{footnote}\footnotetext{\cfbox{#1}}}%
   \fi}
 \newcommand\authornotemark[1][\relax]{%
   \ifx#1\relax\relax\relax
@@ -1844,7 +1844,7 @@
     \fi
     \parindent\z@\parskip0.1\baselineskip
     \if@ACM@authorversion\else
-      \if@printpermission\tfbox{\@copyrightpermission}\par\fi
+      \if@printpermission\cfbox{\@copyrightpermission}\par\fi
     \fi
     \if@ACM@manuscript\else
        \if@ACM@journal@bibstrip\else % Print the conference information
@@ -1854,14 +1854,14 @@
        \fi
     \fi
     \if@printcopyright
-      \tfbox{\copyright\ \@copyrightyear\ \@copyrightowner}\\
+      \cfbox{\copyright\ \@copyrightyear\ \@copyrightowner}\\
     \else
-      \tfbox{\@copyrightyear.}\
+      \cfbox{\@copyrightyear.}\
     \fi
     \if@ACM@manuscript
-      \tfbox{Manuscript submitted to ACM}\\
+      \cfbox{Manuscript submitted to ACM}\\
     \else
-    \tfbox{
+    \cfbox{
       \if@ACM@authorversion
           This is the author's version of the work. It is posted here for
           your personal use. Not for redistribution. The definitive Version
@@ -2080,7 +2080,7 @@
     \fi
     \parbox[t]{\@ACM@title@width}{\raggedright
       \@titlefont\noindent
-      \cfbox{
+      \tfbox{
       \@title
       }}
   \ifx\@subtitle\@empty\else
@@ -2110,7 +2110,7 @@
         \hskip\@ACM@badge@skip
       \fi
       \parbox[t]{\@ACM@title@width}{\centering\@titlefont
-        \cfbox{
+        \tfbox{
         \@title
         }
         \ifx\@subtitle\@empty\else

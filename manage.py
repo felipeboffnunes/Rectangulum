@@ -85,7 +85,7 @@ def main(n, b):
                             os.chdir(ORIGINAL_PATH)
                             # Use detect_shapes(page, visual=True)
                             # to see the bounding boxes found
-                            coordinates = list(map(lambda page : detect_shapes(page, visual=False), pages))
+                            coordinates = list(map(lambda page : detect_shapes(page, visual=True), pages))
 
                             # Delete the smallest boxes
                             bigger = []

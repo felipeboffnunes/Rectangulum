@@ -2080,12 +2080,12 @@
     \fi
     \parbox[t]{\@ACM@title@width}{\raggedright
       \@titlefont\noindent
-      \cfbox{
+      \tfbox{
       \@title
       }}
   \ifx\@subtitle\@empty\else
     \par\noindent{
-        \tfbox{
+        \cfbox{
             \@subtitlefont\@subtitle
         }
     }
@@ -2110,12 +2110,12 @@
         \hskip\@ACM@badge@skip
       \fi
       \parbox[t]{\@ACM@title@width}{\centering\@titlefont
-        \cfbox{
+        \tfbox{
         \@title
         }
         \ifx\@subtitle\@empty\else
           \par\noindent{
-          \tfbox{
+          \cfbox{
           \@subtitlefont\@subtitle}
             }
         \fi

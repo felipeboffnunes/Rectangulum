@@ -2080,7 +2080,7 @@
     \fi
     \parbox[t]{\@ACM@title@width}{\raggedright
       \@titlefont\noindent
-      \cfbox{
+      \tfbox{
       \@title
       }}
   \ifx\@subtitle\@empty\else
@@ -2110,7 +2110,7 @@
         \hskip\@ACM@badge@skip
       \fi
       \parbox[t]{\@ACM@title@width}{\centering\@titlefont
-        \cfbox{
+        \tfbox{
         \@title
         }
         \ifx\@subtitle\@empty\else
@@ -2418,7 +2418,7 @@
       \string\titlenote{} or \string\authornote{} instead!}}%
   \def\@article@string{\ifx\@acmArticle\@empty{\ }\else,
     Article~\@acmArticle\ \fi}%
-  \par\medskip\small\noindent{\tfbox{\bfseries ACM Reference Format:}}\par\nobreak
+  \par\medskip\small\noindent{\cfbox{\bfseries ACM Reference Format:}}\par\nobreak
   \noindent\bgroup
     \def\\{\unskip{}, \ignorespaces}
     \tfbox{

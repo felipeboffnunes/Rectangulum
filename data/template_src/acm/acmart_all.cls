@@ -46,9 +46,7 @@
 \RequirePackage{xkeyval}
 \RequirePackage{xstring}
 \RequirePackage{iftex}
-\RequirePackage{mdframed}
 \RequirePackage{varwidth}
-\RequirePackage{transparent}
 \define@choicekey*+{acmart.cls}{format}[\ACM@format\ACM@format@nr]{%
   manuscript, acmsmall, acmlarge, acmtog, sigconf, siggraph,
   sigplan, sigchi, sigchi-a}[manuscript]{}{%
@@ -66,28 +64,24 @@
 \@DeclareACMFormat{sigchi}
 \@DeclareACMFormat{sigchi-a}
 
-
-\mdfdefinestyle{blackbox}{rightmargin=0pt, leftmargin=0pt, innerrightmargin=0pt, innerleftmargin=0pt, innertopmargin=0pt, innerbottommargin=0pt, splittopskip=0,
-    splitbottomskip=0, frametitleaboveskip=0, frametitlebelowskip=0,
-    skipabove=0, skipbelow=0, everyline=true,linecolor=black}
-
-\newcommand{\cfbox}[1]{%
+\newcommand{\cfbox}[2]{%
     {\color{black}%
-    \setlength\fboxsep{0pt}\hspace{-3mm}\fbox{
-        \begin{varwidth}{\dimexpr\columnwidth-2\fboxsep\itshape}
+    \setlength\fboxsep{0pt}\hspace{-3mm}\vspace{0.5mm}\fbox{
+        \begin{varwidth}{\dimexpr\columnwidth-2\fboxsep\relax}
+        \leavevmode
         {
-            \color{black}#1%
+            \color{black}#2
         }
-        \end{varwidth}%
+        \end{varwidth}
       }
-    }
+    }%
 }
-\newcommand{\tfbox}[1]{%
+\newcommand{\tfbox}[2]{%
     {\color{white}%
-    \setlength\fboxsep{0pt}\hspace{-3mm}\fbox{
-        \begin{varwidth}{\dimexpr\columnwidth-2\fboxsep\itshape}
+    \setlength\fboxsep{0pt}\hspace{-3mm}\vspace{0.5mm}\fbox{
+        \begin{varwidth}{\dimexpr\columnwidth-2\fboxsep\relax}
         {
-            \color{black}#1
+            \color{black}#2
         }
         \end{varwidth}
       }
@@ -1403,9 +1397,9 @@
 \def\@authornotes{}
 \def\authornote#1{%
   \if@ACM@anonymous\else
-    \g@addto@macro\addresses{\tfbox{\@authornotemark}}%
+    \g@addto@macro\addresses{\cfbox{black}{\@authornotemark}}%
     \g@addto@macro\@authornotes{%
-      \stepcounter{footnote}\footnotetext{\tfbox{#1}}}%
+      \stepcounter{footnote}\footnotetext{\cfbox{black}{#1}}}%
   \fi}
 \newcommand\authornotemark[1][\relax]{%
   \ifx#1\relax\relax\relax
@@ -1844,24 +1838,24 @@
     \fi
     \parindent\z@\parskip0.1\baselineskip
     \if@ACM@authorversion\else
-      \if@printpermission\tfbox{\@copyrightpermission}\par\fi
+      \if@printpermission\cfbox{black}{\@copyrightpermission}\par\fi
     \fi
     \if@ACM@manuscript\else
        \if@ACM@journal@bibstrip\else % Print the conference information
             
-         {\tfbox{\itshape \acmConference@shortname, \acmConference@date, \acmConference@venue}}\par
+         {\cfbox{black}{\itshape \acmConference@shortname, \acmConference@date, \acmConference@venue}}\par
             
        \fi
     \fi
     \if@printcopyright
-      \tfbox{\copyright\ \@copyrightyear\ \@copyrightowner}\\
+      \cfbox{black}{\copyright\ \@copyrightyear\ \@copyrightowner}\\
     \else
-      \tfbox{\@copyrightyear.}\
+      \cfbox{black}{\@copyrightyear.}\
     \fi
     \if@ACM@manuscript
-      \tfbox{Manuscript submitted to ACM}\\
+      \cfbox{black}{Manuscript submitted to ACM}\\
     \else
-    \tfbox{
+    \cfbox{black}{
       \if@ACM@authorversion
           This is the author's version of the work. It is posted here for
           your personal use. Not for redistribution. The definitive Version
@@ -1896,16 +1890,16 @@
   \@mkabstract
   \if@ACM@printccs
   \ifx\@concepts\@empty\else\bgroup
-      {\tfbox{\@specialsection{CCS Concepts}%
+      {\cfbox{black}{\@specialsection{\cfbox{black}{CCS Concepts}}%
          \noindent\@concepts\par}}\egroup
      \fi
    \fi
    \ifx\@keywords\@empty\else\bgroup
-      {\tfbox{
+      {\cfbox{black}{
       \if@ACM@journal
-         \@specialsection{\Additional Key Words and Phrases}%
+         \@specialsection{\cfbox{black}{Additional Key Words and Phrases}}%
        \else
-         \@specialsection{Keywords}%
+         \@specialsection{\cfbox{black}{Keywords}}%
        \fi
          \@keywords\par
       }}
@@ -2080,12 +2074,12 @@
     \fi
     \parbox[t]{\@ACM@title@width}{\raggedright
       \@titlefont\noindent
-      \cfbox{
+      \cfbox{black}{
       \@title
       }}
   \ifx\@subtitle\@empty\else
     \par\noindent{
-        \tfbox{
+        \cfbox{black}{
             \@subtitlefont\@subtitle
         }
     }
@@ -2110,12 +2104,12 @@
         \hskip\@ACM@badge@skip
       \fi
       \parbox[t]{\@ACM@title@width}{\centering\@titlefont
-        \cfbox{
+        \cfbox{black}{
         \@title
         }
         \ifx\@subtitle\@empty\else
           \par\noindent{
-          \tfbox{
+          \cfbox{black}{
           \@subtitlefont\@subtitle}
             }
         \fi
@@ -2216,11 +2210,12 @@
 \fi
 \def\@typeset@author@line{%
   \andify\@currentauthors\par\noindent
-  \tfbox{\@currentauthors}
+  \cfbox{black}{
+  \cfbox{black}{\@currentauthors}
   \ifx\@currentaffiliations\@empty\else
     \andify\@currentaffiliations
-      \unskip, {\tfbox{\@currentaffiliations}}\par
-  \fi
+      \unskip, {\cfbox{black}{\@currentaffiliations}}\par
+  \fi}
   \def\@currentauthors{}%
   \def\@currentaffiliations{}}
 \def\@mkauthors@i{%
@@ -2260,9 +2255,9 @@
 \def\@typeset@author@bx{\bgroup\hsize=\author@bx@wd
   \def\and{\par}\normalbaselines
   \global\setbox\author@bx=\vtop{\if@ACM@sigchiamode\else\centering\fi
-    \tfbox{
+    \cfbox{black}{
     \@authorfont\@currentauthors}\par\@affiliationfont
-    \tfbox{\centering{\@currentaffiliation}}}\egroup
+    \cfbox{black}{\centering{\@currentaffiliation}}}\egroup
   \box\author@bx\hspace{\author@bx@sep}%
   \gdef\@currentauthors{}%
   \gdef\@currentaffiliation{}}
@@ -2418,10 +2413,10 @@
       \string\titlenote{} or \string\authornote{} instead!}}%
   \def\@article@string{\ifx\@acmArticle\@empty{\ }\else,
     Article~\@acmArticle\ \fi}%
-  \par\medskip\small\noindent{\tfbox{\bfseries ACM Reference Format:}}\par\nobreak
+  \par\medskip\small\noindent{\cfbox{black}{\bfseries ACM Reference Format:}}\par\nobreak
   \noindent\bgroup
     \def\\{\unskip{}, \ignorespaces}
-    \tfbox{
+    \cfbox{black}{
         \authors\egroup. \@acmYear. \@title
         \ifx\@subtitle\@empty. \else: \@subtitle.\fi
         
@@ -2445,7 +2440,7 @@
       \fi
     }
     
-    \tfbox{
+    \cfbox{black}{
         \ifx\@acmDOI\@empty\else\@formatdoi{\@acmDOI}\fi
     }
     \par\egroup}

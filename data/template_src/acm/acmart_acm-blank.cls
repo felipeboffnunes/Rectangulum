@@ -2080,7 +2080,7 @@
     \fi
     \parbox[t]{\@ACM@title@width}{\raggedright
       \@titlefont\noindent
-      \cfbox{
+      \tfbox{
       \@title
       }}
   \ifx\@subtitle\@empty\else
@@ -2110,7 +2110,7 @@
         \hskip\@ACM@badge@skip
       \fi
       \parbox[t]{\@ACM@title@width}{\centering\@titlefont
-        \cfbox{
+        \tfbox{
         \@title
         }
         \ifx\@subtitle\@empty\else

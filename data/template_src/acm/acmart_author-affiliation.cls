@@ -2080,7 +2080,7 @@
     \fi
     \parbox[t]{\@ACM@title@width}{\raggedright
       \@titlefont\noindent
-      \cfbox{
+      \tfbox{
       \@title
       }}
   \ifx\@subtitle\@empty\else
@@ -2110,7 +2110,7 @@
         \hskip\@ACM@badge@skip
       \fi
       \parbox[t]{\@ACM@title@width}{\centering\@titlefont
-        \cfbox{
+        \tfbox{
         \@title
         }
         \ifx\@subtitle\@empty\else
@@ -2219,7 +2219,7 @@
   \tfbox{\@currentauthors}
   \ifx\@currentaffiliations\@empty\else
     \andify\@currentaffiliations
-      \unskip, {\tfbox{\@currentaffiliations}}\par
+      \unskip, {\cfbox{\@currentaffiliations}}\par
   \fi
   \def\@currentauthors{}%
   \def\@currentaffiliations{}}
@@ -2262,7 +2262,7 @@
   \global\setbox\author@bx=\vtop{\if@ACM@sigchiamode\else\centering\fi
     \tfbox{
     \@authorfont\@currentauthors}\par\@affiliationfont
-    \tfbox{\centering{\@currentaffiliation}}}\egroup
+    \cfbox{\centering{\@currentaffiliation}}}\egroup
   \box\author@bx\hspace{\author@bx@sep}%
   \gdef\@currentauthors{}%
   \gdef\@currentaffiliation{}}

@@ -92,15 +92,11 @@ def main(n, b):
                                     area = w * h
                                     bigger.append([area, z, i])
                             bigger.sort(reverse=True)
-                            if n_box == "n":
-                                n_box = len(bigger)
-                            bigger = bigger[:int(n_box)]
+                            if n_box != "n":
+                                bigger = bigger[:int(n_box)]
                             filtered_coordinates = []
                             for box in bigger:
                                 filtered_coordinates.append(coordinates[box[1]][box[2]])
-                            for x in json_coordinates:
-                                print(x, json_coordinates[x])
-                            input()
                             if idx in json_coordinates:
                                 json_coordinates[idx][category] = filtered_coordinates 
                             else:

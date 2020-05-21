@@ -33,16 +33,17 @@ class ACMART(TexTemplate):
             "ccs", "aux-info", "author-name", "author-affiliation", \
             "acm-ref", "acm-ref-title", "abstract", "all", "blank"]
         self.CLS = list(map(lambda c : f"{SRC_PATH}{ACM_FILE}{c}", self.CLS))
+        # self.CLS = list(map(lambda c : self.CLS[c] = f"{SRC_PATH}{ACM_FILE}{c}", self.CATEGORIES))
 
-    def create_documentclass(self, style, parameter, category=None) -> str:
-        if category == None:
-            content = f"""
-            \\documentclass[{style}, {parameter}]{{acmart}}
-            """
-        else:
-            content = f"""
-            \\documentclass[{style}, {parameter}]{{acmart_{category}}}
-            """
+    def create_documentclass(self, style, parameter, category) -> str:
+        #if category == None:
+        #    content = f"""
+        #    \\documentclass[{style}, {parameter}]{{acmart}}
+        #    """
+        #else:
+        content = f"""
+        \\documentclass[{style}, {parameter}]{{acmart_{category}}}
+        """
         return content
 
     def create_usepackage(self) -> str:

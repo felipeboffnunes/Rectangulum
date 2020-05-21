@@ -3,26 +3,41 @@ from random import randint
 MILLION = 7
 
 
-def create_all_tex(template):
+def create_all_tex(template) -> list:
     style = template.styles[randint(0,len(template.styles)-1)]
     parameter = template.parameters[randint(0,len(template.parameters)-1)]
     
     # First create_tex is the original tex, without categories
-    all_tex = [[create_tex(template, style, parameter), "original", "1"]]
+    all_tex = [[create_tex(template, style, parameter, "blank", 0), "original", 1]]
     for category, n_box in template.CATEGORIES:
+        # if n_box == "n":
+        #    n_box = template.randint(1, 5)
         all_tex.append([create_tex(template, style, parameter, category, n_box), category, n_box])
+        # Rethink this
+        #cls = True
+        #for category_key in template.CLS:
+        #    if n_box == "n":
+        #       n_box = template.randint(1, 5)
+        #    if category == category_key:
+        #       all_tex.append([create_tex(template, style, parameter, category, n_box), template.CLS[category], n_box])
+        #       cls = False
+        #       break
+        #   if not cls:
+        #       category_path = template.CLS[blank]
+        #       all_tex.append([create_tex(template, style, parameter, category, n_box), category_path, n_box])
+        #       cls = True
     return all_tex
 
-def create_tex(template, style, parameter, category = None, n_box = None):
-    if category == "title-section":
+def create_tex(template, style, parameter, category_path, n_box) -> str:
+    if "title-section" in category_path :
         ts_box = "cfboxa"
         p_box = "tfboxa"
         a_box = "tfboxa"
-    elif category == "text":
+    elif "text" in category_path:
         ts_box = "tfboxa"
         p_box = "cfboxa"
         a_box = "tfboxa"
-    elif category == "abstract":
+    elif "abstract" in category_path:
         ts_box = "tfboxa"
         p_box = "tfboxa"
         a_box = "cfboxa"
@@ -33,10 +48,10 @@ def create_tex(template, style, parameter, category = None, n_box = None):
 
     # Needs dynamic logic
     layout = ""
-    if category == None:
+    if category_path == None:
         layout += dedent(template.create_documentclass(style, parameter))
     else:
-        layout += dedent(template.create_documentclass(style, parameter, category))
+        layout += dedent(template.create_documentclass(style, parameter, category_path))
     
     layout += dedent(template.create_usepackage())
     layout += dedent(template.setup_references())

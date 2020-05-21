@@ -1,10 +1,13 @@
 from components.tex_template import TexTemplate
 
+SRC_PATH = "./data/template_src/acm/"
+ACM_FILE = "acmart_"
+
 class ACMART(TexTemplate):
 
     def __init__(self, master=TexTemplate):
         self.styles = ["manuscript", "acmsmall", "acmlarge", "acmtog", \
-            "acmconf", "sigchi", "sigplan"]
+            "acmconf", "sigchi", "sigplan"] #sigchi-a not suited
         
         self.parameters = ["anonymous", "review", \
             "authorversion", "screen", "authordraft"]
@@ -25,15 +28,20 @@ class ACMART(TexTemplate):
         self.CATEGORIES.append(["keywords", 1])
         self.CATEGORIES.append(["ccs", 1])
         self.CATEGORIES.append(["doi", 1])
+        
+        self.CLS = ["title", "subtitle", "keywords", "doi", \
+            "ccs", "aux-info", "author-name", "author-affiliation", \
+            "acm-ref", "acm-ref-title", "abstract", "all", "blank"]
+        self.CLS = list(map(lambda c : f"{SRC_PATH}{ACM_FILE}{c}", self.CLS))
 
     def create_documentclass(self, style, parameter, category=None) -> str:
         if category == None:
             content = f"""
-            \\documentclass[{style}, natbib=false, {parameter}]{{acmart}}
+            \\documentclass[{style}, {parameter}]{{acmart}}
             """
         else:
             content = f"""
-            \\documentclass[{style}, natbib=false, {parameter}]{{acmart_{category}}}
+            \\documentclass[{style}, {parameter}]{{acmart_{category}}}
             """
         return content
 
@@ -42,13 +50,41 @@ class ACMART(TexTemplate):
         \\usepackage{{tikz}}
         \\usetikzlibrary{{tikzmark}}
         \\usetikzlibrary{{calc}}
-        \\usepackage[style=ieee,backend=biblatex,sorting=nty]{{biblatex}}
+        \\usepackage[style=ieee,sorting=nty]{{biblatex}}
+        \\usepackage{{varwidth}}
         """
         return content
 
-    def create_references(self) -> str:
+    def setup_boxes(self) -> str:
         content = f"""
-        \\addbibresource{{sample-base.bib}}
+        \\newcommand{{\\cfboxa}}[1]{{%
+        {{\\color{{black}}%
+        \\setlength\\fboxsep{{0pt}}\\hspace{{-3mm}}\\fbox{{
+        \\begin{{varwidth}}{{\\dimexpr\\columnwidth-2\\fboxsep\\itshape}}
+        {{
+        \\color{{black}}#1%
+        }}
+        \\end{{varwidth}}%
+        }}
+        }}
+        }}
+        \\newcommand{{\\tfboxa}}[1]{{%
+        {{\\color{{white}}%
+        \\setlength\\fboxsep{{0pt}}\\hspace{{-3mm}}\\fbox{{
+        \\begin{{varwidth}}{{\\dimexpr\\columnwidth-2\\fboxsep\\itshape}}
+        {{
+        \\color{{black}}#1
+        }}
+        \\end{{varwidth}}
+        }}
+        }}%
+        }}
+        """
+        return content
+
+    def setup_references(self) -> str:
+        content = f"""
+        \\addbibresource{{bib.bib}}
         \\newbibmacro*{{infoboxnote}}{{\\printfield[infoboxnote]{{\\notefield}}}}
         \\renewbibmacro*{{finentry}}{{\\finentry\\tikzmark{{\\thefield{{entrykey}}end}}}}
         \\newcommand{{\\highlight}}[1]{{%
@@ -119,31 +155,55 @@ class ACMART(TexTemplate):
         """
         return content
 
-    def create_abstract(self, box) -> str:
+    def create_abstract(self) -> str:
         content = f"""
         \\begin{{abstract}}
-        \\{box}{{
         A clear and well-documented \LaTeX\ document is presented as an
         article formatted for publication by ACM in a conference proceedings
         or journal publication. Based on the ``acmart'' document class, this
         article presents and explains many of the common variations, as well
         as many of the formatting elements an author may use in the
         preparation of the documentation of their work.
-        }}
         \\end{{abstract}}
         """
         return content
 
     def create_ccs(self) -> str:
         content = f"""
+
+        \\begin{{CCSXML}}
+        <ccs2012>
+        <concept>
+        <concept_id>10010520.10010553.10010562</concept_id>
+        <concept_desc>Computer systems organization~Embedded systems</concept_desc>
+        <concept_significance>500</concept_significance>
+        </concept>
+        <concept>
+        <concept_id>10010520.10010575.10010755</concept_id>
+        <concept_desc>Computer systems organization~Redundancy</concept_desc>
+        <concept_significance>300</concept_significance>
+        </concept>
+        <concept>
+        <concept_id>10010520.10010553.10010554</concept_id>
+        <concept_desc>Computer systems organization~Robotics</concept_desc>
+        <concept_significance>100</concept_significance>
+        </concept>
+        <concept>
+        <concept_id>10003033.10003083.10003095</concept_id>
+        <concept_desc>Networks~Network reliability</concept_desc>
+        <concept_significance>100</concept_significance>
+        </concept>
+        </ccs2012>
+        \\end{{CCSXML}}
         \\ccsdesc[500]{{Computer systems organization~Embedded systems}}
         \\ccsdesc[300]{{Computer systems organization~Redundancy}}
         \\ccsdesc{{Computer systems organization~Robotics}}
         \\ccsdesc[100]{{Networks~Network reliability}}
+
         """
         return content
 
-    def create_keyworks(self) -> str:
+    def create_keywords(self) -> str:
         content = f"""
         \\keywords{{datasets, neural networks, gaze detection, text tagging}}
         """

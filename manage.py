@@ -19,8 +19,6 @@ def main(n, b):
     texs = list(map(create_all_tex, layouts))
 
     ORIGINAL_PATH = os.getcwd()
-    TMP_TEX_PATH = f"{ORIGINAL_PATH}\\data\\tmp_tex"
-    TMP_PDF_PATH = f"{ORIGINAL_PATH}\\data\\tmp_pdf"
     TEMPLATE_PATH = f"{ORIGINAL_PATH}\\data\\template_src\\acm"
     TEX_PATH = f"{ORIGINAL_PATH}\\results\\tex"
     PDF_PATH = f"{ORIGINAL_PATH}\\results\\pdf"
@@ -58,7 +56,7 @@ def main(n, b):
                 
                 # Move the original tex to /results/tex folder
                 try:
-                    os.rename(tex_paths[0], f"{path}\\{tex_names[0]}".replace("_original", ""))
+                    os.rename(tex_paths[0], f"{TEX_PATH}\\{tex_names[0]}".replace("_original_1", ""))
                 except:
                     pass
 
@@ -66,18 +64,17 @@ def main(n, b):
                 # Split PDFs into individual pages
                 with os.scandir(path) as files:
                     for f in files:                    
-                        if "_original" in f.name:
-                            n_box = re.search("_(\d*?).pdf$", f.name).group(1) 
+                        if "_original_1.pdf" in f.name:
                             # Move the original pdf to /results/pdf folder
                             try:
-                                os.rename(f.path, f"{PDF_PATH}\\{f.name}".replace("_original", "").replace(f"_{n_box}", ""))
+                                os.rename(f.path, f"{PDF_PATH}\\{f.name}".replace("_original_1", ""))
                             except:
                                 os.remove(f.path)            
                         elif ".pdf" in f.name:
                             # Tranforms PDFs in separate pages as PIL Images
                             pages = convert_from_path(f.path, output_folder=path)
-                            n_box = re.search("_(\d*?).pdf$", f.name).group(1) 
-                            category = re.search("_(.*?)_\d*\.pdf$", f.name).group(1)
+                            n_box = re.search("_(\d*n*?)\.pdf$", f.name).group(1) 
+                            category = re.search("_(.*?)_\d*n*\.pdf$", f.name).group(1)
                             idx = re.search("^\d*", f.name).group(0)
                             # Little hack
                             # I don't know why, but I can't use the map(detect_shapes)
@@ -85,7 +82,7 @@ def main(n, b):
                             os.chdir(ORIGINAL_PATH)
                             # Use detect_shapes(page, visual=True)
                             # to see the bounding boxes found
-                            coordinates = list(map(lambda page : detect_shapes(page, visual=True), pages))
+                            coordinates = list(map(lambda page : detect_shapes(page, visual=False), pages))
 
                             # Delete the smallest boxes
                             bigger = []
@@ -95,19 +92,24 @@ def main(n, b):
                                     area = w * h
                                     bigger.append([area, z, i])
                             bigger.sort(reverse=True)
+                            if n_box == "n":
+                                n_box = len(bigger)
                             bigger = bigger[:int(n_box)]
                             filtered_coordinates = []
                             for box in bigger:
                                 filtered_coordinates.append(coordinates[box[1]][box[2]])
-
-                            json_coordinates.update({idx : {category : filtered_coordinates}})
+                            for x in json_coordinates:
+                                print(x, json_coordinates[x])
+                            input()
+                            if idx in json_coordinates:
+                                json_coordinates[idx][category] = filtered_coordinates 
+                            else:
+                                json_coordinates[idx] = {category : filtered_coordinates}
                 os.chdir(JSON_PATH)
                 with open(f"{idx}.json", "w") as j:
                     j.write(json.dumps(json_coordinates))
                            
                             
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 

@@ -14,15 +14,49 @@ def create_all_tex(template):
     return all_tex
 
 def create_tex(template, style, parameter, category = None, n_box = None):
+    if category == "title-section":
+        ts_box = "cfboxa"
+        p_box = "tfboxa"
+        a_box = "tfboxa"
+    elif category == "text":
+        ts_box = "tfboxa"
+        p_box = "cfboxa"
+        a_box = "tfboxa"
+    elif category == "abstract":
+        ts_box = "tfboxa"
+        p_box = "tfboxa"
+        a_box = "cfboxa"
+    else:
+        ts_box = "tfboxa"
+        p_box = "tfboxa"
+        a_box = "tfboxa"
+
     # Needs dynamic logic
     layout = ""
     if category == None:
         layout += dedent(template.create_documentclass(style, parameter))
     else:
         layout += dedent(template.create_documentclass(style, parameter, category))
+    
+    layout += dedent(template.create_usepackage())
+    layout += dedent(template.setup_references())
+    layout += dedent(template.create_acm_setup())
+    layout += dedent(template.setup_boxes())
+
     layout += dedent(template.create_begin_document())
+    
     layout += dedent(template.create_title())
+    layout += dedent(template.create_author())
+    layout += dedent(template.create_abstract())
+    layout += dedent(template.create_ccs())
+    layout += dedent(template.create_keywords())
     layout += dedent(template.create_maketitle())
+
+    layout += dedent(template.create_begin_section(ts_box))
+    layout += dedent(template.create_paragraph(p_box))
+
+    layout += dedent(template.print_references())
+
     layout += dedent(template.create_end_document())
     return layout
 

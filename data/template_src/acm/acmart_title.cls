@@ -1,5 +1,5 @@
 %%
-%% This is file `acmart.cls',
+%% This is file `acmart_title.cls',
 %% generated with the docstrip utility.
 %%
 %% The original source files were:
@@ -11,7 +11,7 @@
 %% For the copyright see the source file.
 %% 
 %% Any modified versions of this file must be renamed
-%% with new filenames distinct from acmart.cls.
+%% with new filenames distinct from acmart_title.cls.
 %% 
 %% For distribution of the original source see the terms
 %% for copying and modification in the file acmart.dtx.
@@ -36,9 +36,9 @@
 %%   Grave accent  \`     Left brace    \{     Vertical bar  \|
 %%   Right brace   \}     Tilde         \~}
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{acmart}
+\ProvidesClass{acmart_title}
 [2020/04/30 v1.71 Typesetting articles for the Association for Computing Machinery]
-\def\@classname{acmart}
+\def\@classname{acmart_title}
 \InputIfFileExists{acmart-preload-hook.tex}{%
   \ClassWarning{\@classname}{%
     I am loading acmart-preload-hook.tex. You are fully responsible
@@ -49,13 +49,13 @@
 \RequirePackage{mdframed}
 \RequirePackage{varwidth}
 \RequirePackage{transparent}
-\define@choicekey*+{acmart.cls}{format}[\ACM@format\ACM@format@nr]{%
+\define@choicekey*+{acmart_title.cls}{format}[\ACM@format\ACM@format@nr]{%
   manuscript, acmsmall, acmlarge, acmtog, sigconf, siggraph,
   sigplan, sigchi, sigchi-a}[manuscript]{}{%
   \ClassError{\@classname}{The option format must be manuscript,
     acmsmall, acmlarge, acmtog, sigconf, siggraph,
     sigplan, sigchi or sigchi-a}}
-\def\@DeclareACMFormat#1{\DeclareOptionX{#1}{\setkeys{acmart.cls}{format=#1}}}
+\def\@DeclareACMFormat#1{\DeclareOptionX{#1}{\setkeys{acmart_title.cls}{format=#1}}}
 \@DeclareACMFormat{manuscript}
 \@DeclareACMFormat{acmsmall}
 \@DeclareACMFormat{acmlarge}
@@ -75,7 +75,7 @@
     {\color{black}%
     \setlength\fboxsep{0pt}\hspace{-3mm}\fbox{
         \begin{varwidth}{\dimexpr\columnwidth-2\fboxsep\itshape}
-        {
+        \leavevmode{
             \color{black}#1%
         }
         \end{varwidth}%
@@ -86,7 +86,8 @@
     {\color{white}%
     \setlength\fboxsep{0pt}\hspace{-3mm}\fbox{
         \begin{varwidth}{\dimexpr\columnwidth-2\fboxsep\itshape}
-        {
+          \leavevmode
+          {
             \color{black}#1
         }
         \end{varwidth}
@@ -97,7 +98,7 @@
 
 
 \ExecuteOptionsX{format}
-\define@boolkey+{acmart.cls}[@ACM@]{screen}[true]{%
+\define@boolkey+{acmart_title.cls}[@ACM@]{screen}[true]{%
   \if@ACM@screen
     \PackageInfo{\@classname}{Using screen mode}%
   \else
@@ -105,7 +106,7 @@
   \fi}{\PackageError{\@classname}{The option screen can be either true or
     false}}
 \ExecuteOptionsX{screen=false}
-\define@boolkey+{acmart.cls}[@ACM@]{urlbreakonhyphens}[true]{%
+\define@boolkey+{acmart_title.cls}[@ACM@]{urlbreakonhyphens}[true]{%
   \if@ACM@urlbreakonhyphens
     \PackageInfo{\@classname}{Using breaking urls on hyphens}%
   \else
@@ -113,7 +114,7 @@
   \fi}{\PackageError{\@classname}{The option urlbreakonhyphens can be either true or
     false}}
 \ExecuteOptionsX{urlbreakonhyphens=true}
-\define@boolkey+{acmart.cls}[@ACM@]{acmthm}[true]{%
+\define@boolkey+{acmart_title.cls}[@ACM@]{acmthm}[true]{%
   \if@ACM@acmthm
     \PackageInfo{\@classname}{Requiring acmthm}%
   \else
@@ -121,7 +122,7 @@
   \fi}{\PackageError{\@classname}{The option acmthm can be either true or
     false}}
 \ExecuteOptionsX{acmthm=true}
-\define@boolkey+{acmart.cls}[@ACM@]{review}[true]{%
+\define@boolkey+{acmart_title.cls}[@ACM@]{review}[true]{%
   \if@ACM@review
     \PackageInfo{\@classname}{Using review mode}%
     \AtBeginDocument{\@ACM@printfoliostrue}%
@@ -130,7 +131,7 @@
   \fi}{\PackageError{\@classname}{The option review can be either true or
     false}}
 \ExecuteOptionsX{review=false}
-\define@boolkey+{acmart.cls}[@ACM@]{authorversion}[true]{%
+\define@boolkey+{acmart_title.cls}[@ACM@]{authorversion}[true]{%
   \if@ACM@authorversion
     \PackageInfo{\@classname}{Using authorversion mode}%
   \else
@@ -138,7 +139,7 @@
   \fi}{\PackageError{\@classname}{The option authorversion can be either true or
     false}}
 \ExecuteOptionsX{authorversion=false}
-\define@boolkey+{acmart.cls}[@ACM@]{nonacm}[true]{%
+\define@boolkey+{acmart_title.cls}[@ACM@]{nonacm}[true]{%
   \if@ACM@nonacm
     \PackageInfo{\@classname}{Using nonacm mode}%
     \AtBeginDocument{\@ACM@printacmreffalse}%
@@ -150,11 +151,11 @@
   \fi}{\PackageError{\@classname}{The option nonacm can be either true or
     false}}
 \ExecuteOptionsX{nonacm=false}
-\define@boolkey+{acmart.cls}[@ACM@]{balance}[true]{}{%
+\define@boolkey+{acmart_title.cls}[@ACM@]{balance}[true]{}{%
   \PackageError{\@classname}{The option balance can be either true or
     false}}
 \ExecuteOptionsX{balance}
-\define@boolkey+{acmart.cls}[@ACM@]{natbib}[true]{%
+\define@boolkey+{acmart_title.cls}[@ACM@]{natbib}[true]{%
     \if@ACM@natbib
     \PackageInfo{\@classname}{Explicitly selecting natbib mode}%
   \else
@@ -162,7 +163,7 @@
   \fi}{\PackageError{\@classname}{The option natbib can be either true or
     false}}
 \ExecuteOptionsX{natbib=true}
-\define@boolkey+{acmart.cls}[@ACM@]{anonymous}[true]{%
+\define@boolkey+{acmart_title.cls}[@ACM@]{anonymous}[true]{%
   \if@ACM@anonymous
     \PackageInfo{\@classname}{Using anonymous mode}%
   \else
@@ -170,7 +171,7 @@
   \fi}{\PackageError{\@classname}{The option anonymous can be either true or
     false}}
 \ExecuteOptionsX{anonymous=false}
-\define@boolkey+{acmart.cls}[@ACM@]{timestamp}[true]{%
+\define@boolkey+{acmart_title.cls}[@ACM@]{timestamp}[true]{%
   \if@ACM@timestamp
     \PackageInfo{\@classname}{Using timestamp mode}%
   \else
@@ -178,7 +179,7 @@
   \fi}{\PackageError{\@classname}{The option timestamp can be either true or
     false}}
 \ExecuteOptionsX{timestamp=false}
-\define@boolkey+{acmart.cls}[@ACM@]{authordraft}[true]{%
+\define@boolkey+{acmart_title.cls}[@ACM@]{authordraft}[true]{%
   \if@ACM@authordraft
     \PackageInfo{\@classname}{Using authordraft mode}%
     \@ACM@timestamptrue
@@ -205,13 +206,13 @@
 \ClassWarning{\@classname}{%
   The format siggraph is now obsolete.\MessageBreak
   I am switching to sigconf.}
-  \setkeys{acmart.cls}{format=sigconf}
+  \setkeys{acmart_title.cls}{format=sigconf}
 \fi
 \ifnum\ACM@format@nr=7\relax % sigchi
 \ClassWarning{\@classname}{%
   The format sigchi is now obsolete.\MessageBreak
   I am switching to sigconf.}
-  \setkeys{acmart.cls}{format=sigconf}
+  \setkeys{acmart_title.cls}{format=sigconf}
 \fi
 \ifnum\ACM@format@nr=8\relax % sigchi
 \ClassWarning{\@classname}{%
@@ -1903,7 +1904,7 @@
    \ifx\@keywords\@empty\else\bgroup
       {\tfbox{
       \if@ACM@journal
-         \@specialsection{\Additional Key Words and Phrases}%
+         \@specialsection{Additional Key Words and Phrases}%
        \else
          \@specialsection{Keywords}%
        \fi
@@ -1925,7 +1926,7 @@
     pdfsubject={\@concepts},
     pdfkeywords={\@keywords},
     pdfcreator={LaTeX with acmart
-      \csname ver@acmart.cls\endcsname\space
+      \csname ver@acmart_title.cls\endcsname\space
       and hyperref
       \csname ver@hyperref.sty\endcsname}}%
   \global\@topnum\z@ % this prevents floats from falling
@@ -2095,7 +2096,7 @@
     \raisebox{-.5\baselineskip}[\z@][\z@]{\href{\@acmBadgeR@url}{%
         \includegraphics[width=\@ACM@badge@width]{\@acmBadgeR@image}}}%
   \fi
-  \par\bigskip}}%
+  \par\bigskip}%
 \def\@mktitle@iii{\hsize=\textwidth
     \setbox\mktitle@bx=\vbox{\@titlefont\centering
       \@ACM@title@width=\hsize
@@ -2405,7 +2406,7 @@
     \else
       \section*{\abstractname}%
     \fi
-   \ignorespaces\@abstract\par}%
+   \ignorespaces\tfbox{\@abstract}\par}%
   \fi\egroup}
 \def\@mkbibcitation{\bgroup
   \let\@vspace\@vspace@orig
@@ -3017,4 +3018,4 @@
 \normalsize\normalfont\frenchspacing
 \endinput
 %%
-%% End of file `acmart.cls'.
+%% End of file `acmart_title.cls'.

@@ -1,5 +1,5 @@
 %%
-%% This is file `acmart.cls',
+%% This is file `acmart_all.cls',
 %% generated with the docstrip utility.
 %%
 %% The original source files were:
@@ -11,7 +11,7 @@
 %% For the copyright see the source file.
 %% 
 %% Any modified versions of this file must be renamed
-%% with new filenames distinct from acmart.cls.
+%% with new filenames distinct from acmart_all.cls.
 %% 
 %% For distribution of the original source see the terms
 %% for copying and modification in the file acmart.dtx.
@@ -36,9 +36,9 @@
 %%   Grave accent  \`     Left brace    \{     Vertical bar  \|
 %%   Right brace   \}     Tilde         \~}
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{acmart}
+\ProvidesClass{acmart_all}
 [2020/04/30 v1.71 Typesetting articles for the Association for Computing Machinery]
-\def\@classname{acmart}
+\def\@classname{acmart_all}
 \InputIfFileExists{acmart-preload-hook.tex}{%
   \ClassWarning{\@classname}{%
     I am loading acmart-preload-hook.tex. You are fully responsible
@@ -47,13 +47,13 @@
 \RequirePackage{xstring}
 \RequirePackage{iftex}
 \RequirePackage{varwidth}
-\define@choicekey*+{acmart.cls}{format}[\ACM@format\ACM@format@nr]{%
+\define@choicekey*+{acmart_all.cls}{format}[\ACM@format\ACM@format@nr]{%
   manuscript, acmsmall, acmlarge, acmtog, sigconf, siggraph,
   sigplan, sigchi, sigchi-a}[manuscript]{}{%
   \ClassError{\@classname}{The option format must be manuscript,
     acmsmall, acmlarge, acmtog, sigconf, siggraph,
     sigplan, sigchi or sigchi-a}}
-\def\@DeclareACMFormat#1{\DeclareOptionX{#1}{\setkeys{acmart.cls}{format=#1}}}
+\def\@DeclareACMFormat#1{\DeclareOptionX{#1}{\setkeys{acmart_all.cls}{format=#1}}}
 \@DeclareACMFormat{manuscript}
 \@DeclareACMFormat{acmsmall}
 \@DeclareACMFormat{acmlarge}
@@ -64,24 +64,23 @@
 \@DeclareACMFormat{sigchi}
 \@DeclareACMFormat{sigchi-a}
 
-\newcommand{\cfbox}[2]{%
+\newcommand{\cfbox}[1]{%
     {\color{black}%
-    \setlength\fboxsep{0pt}\hspace{-3mm}\vspace{0.5mm}\fbox{
-        \begin{varwidth}{\dimexpr\columnwidth-2\fboxsep\relax}
-        \leavevmode
-        {
-            \color{black}#2
+    \setlength\fboxsep{0pt}\hspace{-3mm}\fbox{
+        \begin{varwidth}{\dimexpr\columnwidth-2\fboxsep\itshape}
+          \leavevmode{
+            \color{black}#1%
         }
         \end{varwidth}
       }
     }%
 }
-\newcommand{\tfbox}[2]{%
+\newcommand{\tfbox}[1]{%
     {\color{white}%
-    \setlength\fboxsep{0pt}\hspace{-3mm}\vspace{0.5mm}\fbox{
-        \begin{varwidth}{\dimexpr\columnwidth-2\fboxsep\relax}
-        {
-            \color{black}#2
+    \setlength\fboxsep{0pt}\hspace{-3mm}\fbox{
+        \begin{varwidth}{\dimexpr\columnwidth-2\fboxsep\itshape}
+          \leavevmode{
+            \color{black}#1%
         }
         \end{varwidth}
       }
@@ -91,7 +90,7 @@
 
 
 \ExecuteOptionsX{format}
-\define@boolkey+{acmart.cls}[@ACM@]{screen}[true]{%
+\define@boolkey+{acmart_all.cls}[@ACM@]{screen}[true]{%
   \if@ACM@screen
     \PackageInfo{\@classname}{Using screen mode}%
   \else
@@ -99,7 +98,7 @@
   \fi}{\PackageError{\@classname}{The option screen can be either true or
     false}}
 \ExecuteOptionsX{screen=false}
-\define@boolkey+{acmart.cls}[@ACM@]{urlbreakonhyphens}[true]{%
+\define@boolkey+{acmart_all.cls}[@ACM@]{urlbreakonhyphens}[true]{%
   \if@ACM@urlbreakonhyphens
     \PackageInfo{\@classname}{Using breaking urls on hyphens}%
   \else
@@ -107,7 +106,7 @@
   \fi}{\PackageError{\@classname}{The option urlbreakonhyphens can be either true or
     false}}
 \ExecuteOptionsX{urlbreakonhyphens=true}
-\define@boolkey+{acmart.cls}[@ACM@]{acmthm}[true]{%
+\define@boolkey+{acmart_all.cls}[@ACM@]{acmthm}[true]{%
   \if@ACM@acmthm
     \PackageInfo{\@classname}{Requiring acmthm}%
   \else
@@ -115,7 +114,7 @@
   \fi}{\PackageError{\@classname}{The option acmthm can be either true or
     false}}
 \ExecuteOptionsX{acmthm=true}
-\define@boolkey+{acmart.cls}[@ACM@]{review}[true]{%
+\define@boolkey+{acmart_all.cls}[@ACM@]{review}[true]{%
   \if@ACM@review
     \PackageInfo{\@classname}{Using review mode}%
     \AtBeginDocument{\@ACM@printfoliostrue}%
@@ -124,7 +123,7 @@
   \fi}{\PackageError{\@classname}{The option review can be either true or
     false}}
 \ExecuteOptionsX{review=false}
-\define@boolkey+{acmart.cls}[@ACM@]{authorversion}[true]{%
+\define@boolkey+{acmart_all.cls}[@ACM@]{authorversion}[true]{%
   \if@ACM@authorversion
     \PackageInfo{\@classname}{Using authorversion mode}%
   \else
@@ -132,7 +131,7 @@
   \fi}{\PackageError{\@classname}{The option authorversion can be either true or
     false}}
 \ExecuteOptionsX{authorversion=false}
-\define@boolkey+{acmart.cls}[@ACM@]{nonacm}[true]{%
+\define@boolkey+{acmart_all.cls}[@ACM@]{nonacm}[true]{%
   \if@ACM@nonacm
     \PackageInfo{\@classname}{Using nonacm mode}%
     \AtBeginDocument{\@ACM@printacmreffalse}%
@@ -144,11 +143,11 @@
   \fi}{\PackageError{\@classname}{The option nonacm can be either true or
     false}}
 \ExecuteOptionsX{nonacm=false}
-\define@boolkey+{acmart.cls}[@ACM@]{balance}[true]{}{%
+\define@boolkey+{acmart_all.cls}[@ACM@]{balance}[true]{}{%
   \PackageError{\@classname}{The option balance can be either true or
     false}}
 \ExecuteOptionsX{balance}
-\define@boolkey+{acmart.cls}[@ACM@]{natbib}[true]{%
+\define@boolkey+{acmart_all.cls}[@ACM@]{natbib}[true]{%
     \if@ACM@natbib
     \PackageInfo{\@classname}{Explicitly selecting natbib mode}%
   \else
@@ -156,7 +155,7 @@
   \fi}{\PackageError{\@classname}{The option natbib can be either true or
     false}}
 \ExecuteOptionsX{natbib=true}
-\define@boolkey+{acmart.cls}[@ACM@]{anonymous}[true]{%
+\define@boolkey+{acmart_all.cls}[@ACM@]{anonymous}[true]{%
   \if@ACM@anonymous
     \PackageInfo{\@classname}{Using anonymous mode}%
   \else
@@ -164,7 +163,7 @@
   \fi}{\PackageError{\@classname}{The option anonymous can be either true or
     false}}
 \ExecuteOptionsX{anonymous=false}
-\define@boolkey+{acmart.cls}[@ACM@]{timestamp}[true]{%
+\define@boolkey+{acmart_all.cls}[@ACM@]{timestamp}[true]{%
   \if@ACM@timestamp
     \PackageInfo{\@classname}{Using timestamp mode}%
   \else
@@ -172,7 +171,7 @@
   \fi}{\PackageError{\@classname}{The option timestamp can be either true or
     false}}
 \ExecuteOptionsX{timestamp=false}
-\define@boolkey+{acmart.cls}[@ACM@]{authordraft}[true]{%
+\define@boolkey+{acmart_all.cls}[@ACM@]{authordraft}[true]{%
   \if@ACM@authordraft
     \PackageInfo{\@classname}{Using authordraft mode}%
     \@ACM@timestamptrue
@@ -199,13 +198,13 @@
 \ClassWarning{\@classname}{%
   The format siggraph is now obsolete.\MessageBreak
   I am switching to sigconf.}
-  \setkeys{acmart.cls}{format=sigconf}
+  \setkeys{acmart_all.cls}{format=sigconf}
 \fi
 \ifnum\ACM@format@nr=7\relax % sigchi
 \ClassWarning{\@classname}{%
   The format sigchi is now obsolete.\MessageBreak
   I am switching to sigconf.}
-  \setkeys{acmart.cls}{format=sigconf}
+  \setkeys{acmart_all.cls}{format=sigconf}
 \fi
 \ifnum\ACM@format@nr=8\relax % sigchi
 \ClassWarning{\@classname}{%
@@ -1397,9 +1396,9 @@
 \def\@authornotes{}
 \def\authornote#1{%
   \if@ACM@anonymous\else
-    \g@addto@macro\addresses{\cfbox{black}{\@authornotemark}}%
+    \g@addto@macro\addresses{\cfbox{\@authornotemark}}%
     \g@addto@macro\@authornotes{%
-      \stepcounter{footnote}\footnotetext{\cfbox{black}{#1}}}%
+      \stepcounter{footnote}\footnotetext{\cfbox{#1}}}%
   \fi}
 \newcommand\authornotemark[1][\relax]{%
   \ifx#1\relax\relax\relax
@@ -1838,24 +1837,24 @@
     \fi
     \parindent\z@\parskip0.1\baselineskip
     \if@ACM@authorversion\else
-      \if@printpermission\cfbox{black}{\@copyrightpermission}\par\fi
+      \if@printpermission\cfbox{\@copyrightpermission}\par\fi
     \fi
     \if@ACM@manuscript\else
        \if@ACM@journal@bibstrip\else % Print the conference information
             
-         {\cfbox{black}{\itshape \acmConference@shortname, \acmConference@date, \acmConference@venue}}\par
+         {\cfbox{\itshape \acmConference@shortname, \acmConference@date, \acmConference@venue}}\par
             
        \fi
     \fi
     \if@printcopyright
-      \cfbox{black}{\copyright\ \@copyrightyear\ \@copyrightowner}\\
+      \cfbox{\copyright\ \@copyrightyear\ \@copyrightowner}\\
     \else
-      \cfbox{black}{\@copyrightyear.}\
+      \cfbox{\@copyrightyear.}\
     \fi
     \if@ACM@manuscript
-      \cfbox{black}{Manuscript submitted to ACM}\\
+      \cfbox{Manuscript submitted to ACM}\\
     \else
-    \cfbox{black}{
+    \cfbox{
       \if@ACM@authorversion
           This is the author's version of the work. It is posted here for
           your personal use. Not for redistribution. The definitive Version
@@ -1890,16 +1889,16 @@
   \@mkabstract
   \if@ACM@printccs
   \ifx\@concepts\@empty\else\bgroup
-      {\cfbox{black}{\@specialsection{\cfbox{black}{CCS Concepts}}%
+      {\cfbox{\@specialsection{\cfbox{CCS Concepts}}%
          \noindent\@concepts\par}}\egroup
      \fi
    \fi
    \ifx\@keywords\@empty\else\bgroup
-      {\cfbox{black}{
+      {\cfbox{
       \if@ACM@journal
-         \@specialsection{\cfbox{black}{Additional Key Words and Phrases}}%
+         \@specialsection{\cfbox{Additional Key Words and Phrases}}%
        \else
-         \@specialsection{\cfbox{black}{Keywords}}%
+         \@specialsection{\cfbox{Keywords}}%
        \fi
          \@keywords\par
       }}
@@ -1919,7 +1918,7 @@
     pdfsubject={\@concepts},
     pdfkeywords={\@keywords},
     pdfcreator={LaTeX with acmart
-      \csname ver@acmart.cls\endcsname\space
+      \csname ver@acmart_all.cls\endcsname\space
       and hyperref
       \csname ver@hyperref.sty\endcsname}}%
   \global\@topnum\z@ % this prevents floats from falling
@@ -2074,12 +2073,12 @@
     \fi
     \parbox[t]{\@ACM@title@width}{\raggedright
       \@titlefont\noindent
-      \cfbox{black}{
+      \cfbox{
       \@title
       }}
   \ifx\@subtitle\@empty\else
     \par\noindent{
-        \cfbox{black}{
+        \cfbox{
             \@subtitlefont\@subtitle
         }
     }
@@ -2089,7 +2088,7 @@
     \raisebox{-.5\baselineskip}[\z@][\z@]{\href{\@acmBadgeR@url}{%
         \includegraphics[width=\@ACM@badge@width]{\@acmBadgeR@image}}}%
   \fi
-  \par\bigskip}}%
+  \par\bigskip}%
 \def\@mktitle@iii{\hsize=\textwidth
     \setbox\mktitle@bx=\vbox{\@titlefont\centering
       \@ACM@title@width=\hsize
@@ -2104,12 +2103,12 @@
         \hskip\@ACM@badge@skip
       \fi
       \parbox[t]{\@ACM@title@width}{\centering\@titlefont
-        \cfbox{black}{
+        \cfbox{
         \@title
         }
         \ifx\@subtitle\@empty\else
           \par\noindent{
-          \cfbox{black}{
+          \cfbox{
           \@subtitlefont\@subtitle}
             }
         \fi
@@ -2210,11 +2209,11 @@
 \fi
 \def\@typeset@author@line{%
   \andify\@currentauthors\par\noindent
-  \cfbox{black}{
-  \cfbox{black}{\@currentauthors}
+  \cfbox{
+  \cfbox{\@currentauthors}
   \ifx\@currentaffiliations\@empty\else
     \andify\@currentaffiliations
-      \unskip, {\cfbox{black}{\@currentaffiliations}}\par
+      \unskip, {\cfbox{\@currentaffiliations}}\par
   \fi}
   \def\@currentauthors{}%
   \def\@currentaffiliations{}}
@@ -2255,9 +2254,9 @@
 \def\@typeset@author@bx{\bgroup\hsize=\author@bx@wd
   \def\and{\par}\normalbaselines
   \global\setbox\author@bx=\vtop{\if@ACM@sigchiamode\else\centering\fi
-    \cfbox{black}{
+    \cfbox{
     \@authorfont\@currentauthors}\par\@affiliationfont
-    \cfbox{black}{\centering{\@currentaffiliation}}}\egroup
+    \cfbox{\centering{\@currentaffiliation}}}\egroup
   \box\author@bx\hspace{\author@bx@sep}%
   \gdef\@currentauthors{}%
   \gdef\@currentaffiliation{}}
@@ -2400,7 +2399,7 @@
     \else
       \section*{\abstractname}%
     \fi
-   \ignorespaces\@abstract\par}%
+   \ignorespaces\cfbox{\@abstract}\par}%
   \fi\egroup}
 \def\@mkbibcitation{\bgroup
   \let\@vspace\@vspace@orig
@@ -2413,10 +2412,10 @@
       \string\titlenote{} or \string\authornote{} instead!}}%
   \def\@article@string{\ifx\@acmArticle\@empty{\ }\else,
     Article~\@acmArticle\ \fi}%
-  \par\medskip\small\noindent{\cfbox{black}{\bfseries ACM Reference Format:}}\par\nobreak
+  \par\medskip\small\noindent{\cfbox{\bfseries ACM Reference Format:}}\par\nobreak
   \noindent\bgroup
     \def\\{\unskip{}, \ignorespaces}
-    \cfbox{black}{
+    \cfbox{
         \authors\egroup. \@acmYear. \@title
         \ifx\@subtitle\@empty. \else: \@subtitle.\fi
         
@@ -2440,7 +2439,7 @@
       \fi
     }
     
-    \cfbox{black}{
+    \cfbox{
         \ifx\@acmDOI\@empty\else\@formatdoi{\@acmDOI}\fi
     }
     \par\egroup}
@@ -3012,4 +3011,4 @@
 \normalsize\normalfont\frenchspacing
 \endinput
 %%
-%% End of file `acmart.cls'.
+%% End of file `acmart_all.cls'.

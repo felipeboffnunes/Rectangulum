@@ -19,17 +19,67 @@ class ACMART(TexTemplate):
         # Delete default categories this template does not support
         # self.CATEGORIES.remove(["images", "n"])
         # self.CATEGORIES.remove(["images-dec", "n"])
-        
+        self.CATEGORIES.append(["acm-ref-title", 1])
+        self.CATEGORIES.append(["acm-ref", 1])
+        self.CATEGORIES.append(["author-affiliation", "n"])
+        self.CATEGORIES.append(["keywords", 1])
+        self.CATEGORIES.append(["ccs", 1])
+        self.CATEGORIES.append(["doi", 1])
 
     def create_documentclass(self, style, parameter, category=None) -> str:
         if category == None:
             content = f"""
-            \\documentclass[{style}, {parameter}]{{acmart}}
+            \\documentclass[{style}, natbib=false, {parameter}]{{acmart}}
             """
         else:
             content = f"""
-            \\documentclass[{style}, {parameter}]{{acmart_{category}}}
+            \\documentclass[{style}, natbib=false, {parameter}]{{acmart_{category}}}
             """
+        return content
+
+    def create_usepackage(self) -> str:
+        content = f"""
+        \\usepackage{{tikz}}
+        \\usetikzlibrary{{tikzmark}}
+        \\usetikzlibrary{{calc}}
+        \\usepackage[style=ieee,backend=biblatex,sorting=nty]{{biblatex}}
+        """
+        return content
+
+    def create_references(self) -> str:
+        content = f"""
+        \\addbibresource{{sample-base.bib}}
+        \\newbibmacro*{{infoboxnote}}{{\\printfield[infoboxnote]{{\\notefield}}}}
+        \\renewbibmacro*{{finentry}}{{\\finentry\\tikzmark{{\\thefield{{entrykey}}end}}}}
+        \\newcommand{{\\highlight}}[1]{{%
+        \\begin{{tikzpicture}}[remember picture, overlay]
+        \\coordinate (begin) at ($ (pic cs:#1beg) + (-.5ex,2ex) $);
+        \\coordinate (end) at ($ (pic cs:#1end) + (0,-.8ex) $);
+        \\coordinate (penult) at ($ (begin |-  end) + (0,-.5ex) $);
+        \\coordinate (right) at ($ (begin) + (\\linewidth+1ex,0) $);
+        \\draw[draw=black] (begin) -- (right |- begin) -- (right |- end) -- ( begin |- end) -- cycle;
+        \\end{{tikzpicture}}}}
+
+        \\AtEveryBibitem{{%
+            {{\\highlight{{\\thefield{{entrykey}}}}\\tikzmark{{\\thefield{{entrykey}}beg}}\\usebibmacro{{infoboxnote}}\\bibitemstyle}}%
+            {{}}}}
+        \\setlength\\bibitemsep{{0.2\\baselineskip}}
+        """
+        return content
+
+    def create_acm_setup(self) -> str:
+        content = f"""
+        \\setcopyright{{acmcopyright}}
+        \\copyrightyear{{2018}}
+        \\acmYear{{2018}}
+        \\acmDOI{{10.1145/1122445.1122456}}
+        \\acmConference[Woodstock '18]{{Woodstock '18: ACM Symposium on Neural
+        Gaze Detection}}{{June 03--05, 2018}}{{Woodstock, NY}}
+        \\acmBooktitle{{Woodstock '18: ACM Symposium on Neural Gaze Detection,
+        June 03--05, 2018, Woodstock, NY}}
+        \\acmPrice{{15.00}}
+        \\acmISBN{{978-1-4503-XXXX-X/18/06}}
+        """
         return content
 
     def create_begin_document(self) -> str:
@@ -47,6 +97,88 @@ class ACMART(TexTemplate):
     def create_title(self) -> str:
         content = f"""
         \\title{{Example Title}}
+        """
+        return content
+
+    def create_author(self) -> str:
+        content = f"""
+        \\author{{Ben Trovato}}
+        \\authornote{{Both authors contributed equally to this research.}}
+        \\email{{trovato@corporation.com}}
+        \\orcid{{1234-5678-9012}}
+        \\author{{G.K.M. Tobin}}
+        \\authornotemark[1]
+        \\email{{webmaster@marysville-ohio.com}}
+        \\affiliation{{%
+        \\institution{{Institute for Clarity in Documentation}}
+        \\streetaddress{{P.O. Box 1212}}
+        \\city{{Dublin}}
+        \\state{{Ohio}}
+        \\postcode{{43017-6221}}
+        }}
+        """
+        return content
+
+    def create_abstract(self, box) -> str:
+        content = f"""
+        \\begin{{abstract}}
+        \\{box}{{
+        A clear and well-documented \LaTeX\ document is presented as an
+        article formatted for publication by ACM in a conference proceedings
+        or journal publication. Based on the ``acmart'' document class, this
+        article presents and explains many of the common variations, as well
+        as many of the formatting elements an author may use in the
+        preparation of the documentation of their work.
+        }}
+        \\end{{abstract}}
+        """
+        return content
+
+    def create_ccs(self) -> str:
+        content = f"""
+        \\ccsdesc[500]{{Computer systems organization~Embedded systems}}
+        \\ccsdesc[300]{{Computer systems organization~Redundancy}}
+        \\ccsdesc{{Computer systems organization~Robotics}}
+        \\ccsdesc[100]{{Networks~Network reliability}}
+        """
+        return content
+
+    def create_keyworks(self) -> str:
+        content = f"""
+        \\keywords{{datasets, neural networks, gaze detection, text tagging}}
+        """
+        return content
+
+    def create_begin_section(self, box) -> str:
+        content = f"""
+        \\{box}{{
+        \\section{{Introduction}}
+        }}
+        """
+        return content
+    
+    def create_begin_subsection(self, box) -> str:
+        content = f"""
+        \\{box}{{
+        \\subsection{{sub Introduction}}
+        }}
+        """
+        return content
+
+    def create_paragraph(self, box) -> str:
+        content = f"""
+        \\{box}{{
+        If you are new to publishing with ACM, this document is a valuable
+        guide to the process of preparing your work for publication. If you
+        have published with ACM before, this document provides insight and
+        instruction into more recent changes to the article template.
+        }}
+        """
+        return content
+
+    def print_references(self) -> str:
+        content = f"""
+        \\printbibliography
         """
         return content
 

@@ -12,11 +12,13 @@ from components.create_tex import create_all_tex, download_tex
 from components.create_pdf import create_pdf
 from components.detect_shapes import detect_shapes
 
+MILLION = 7
+
 def main(n, b):
 
     ids = list(range(1, int(args.n) + 1))
-    layouts = list(map(select_layout, ids))
-    texs = list(map(create_all_tex, layouts))
+    templates, layouts = zip(*map(select_layout, ids))
+    texs = list(map(create_all_tex, templates, layouts))
 
     ORIGINAL_PATH = os.getcwd()
     TEMPLATE_PATH = f"{ORIGINAL_PATH}\\data\\template_src\\acm"
@@ -36,53 +38,54 @@ def main(n, b):
         # To receive the separate coordinates
         # we need to create each pdf with only
         # one category with black boxes
+        # tex_categories = [tex, category, category_path, n]
         for idx, tex_categories in zip(batch_ids, batch_texs):
-            # tex_categories = [tex, category, n_box]
-
+            # Format idx (1 becomes 0000001)
+            zeros = "0" * (MILLION - len(str(idx)))
+            idx = f"{zeros}{idx}"
+            
             with tempfile.TemporaryDirectory() as path:
+                
                 os.chdir(path)
                 tex_names = list(map( \
-                    lambda tex_category : download_tex(idx, tex_category[0], tex_category[1], tex_category[2]), tex_categories \
+                    lambda tex_category : download_tex(idx, tex_category[0], tex_category[1], tex_category[3]), tex_categories \
                     ))
 
                 tex_paths = list(map( \
                     lambda tex_name : f"{path}\\{tex_name}", tex_names \
                     ))
-            
+        
                 # Go to /data/template_src/{template}/ and create PDFs
                 os.chdir(TEMPLATE_PATH)
                 list(map(lambda tex_path: create_pdf(tex_path, path), tex_paths))
-                os.chdir(path)
                 
                 # Move the original tex to /results/tex folder
                 try:
-                    os.rename(tex_paths[0], f"{TEX_PATH}\\{tex_names[0]}".replace("_original_1", ""))
+                    os.rename(tex_paths[0], f"{TEX_PATH}\\{tex_names[0]}".replace("_original_0", ""))
                 except:
-                    pass
+                    os.remove(tex_paths[0])
 
                 json_coordinates = {}
                 # Split PDFs into individual pages
                 with os.scandir(path) as files:
                     for f in files:                    
-                        if "_original_1.pdf" in f.name:
+                        if "_original_0.pdf" in f.name:
                             # Move the original pdf to /results/pdf folder
                             try:
-                                os.rename(f.path, f"{PDF_PATH}\\{f.name}".replace("_original_1", ""))
+                                os.rename(f.path, f"{PDF_PATH}\\{f.name}".replace("_original_0", ""))
                             except:
                                 os.remove(f.path)            
                         elif ".pdf" in f.name:
                             # Tranforms PDFs in separate pages as PIL Images
                             pages = convert_from_path(f.path, output_folder=path)
+
                             n_box = re.search("_(\d*n*?)\.pdf$", f.name).group(1) 
                             category = re.search("_(.*?)_\d*n*\.pdf$", f.name).group(1)
                             idx = re.search("^\d*", f.name).group(0)
-                            # Little hack
-                            # I don't know why, but I can't use the map(detect_shapes)
-                            # inside the temporary directory
-                            os.chdir(ORIGINAL_PATH)
+
                             # Use detect_shapes(page, visual=True)
                             # to see the bounding boxes found
-                            coordinates = list(map(lambda page : detect_shapes(page, visual=False), pages))
+                            coordinates = list(map(lambda page : detect_shapes(page, visual=True), pages))
 
                             # Delete the smallest boxes
                             bigger = []
@@ -97,10 +100,13 @@ def main(n, b):
                             filtered_coordinates = []
                             for box in bigger:
                                 filtered_coordinates.append(coordinates[box[1]][box[2]])
+
+                            # Get coordinates
                             if idx in json_coordinates:
                                 json_coordinates[idx][category] = filtered_coordinates 
                             else:
                                 json_coordinates[idx] = {category : filtered_coordinates}
+
                 os.chdir(JSON_PATH)
                 with open(f"{idx}.json", "w") as j:
                     j.write(json.dumps(json_coordinates))

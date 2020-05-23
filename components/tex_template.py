@@ -13,7 +13,7 @@ class TexTemplate(object):
         pass
        
     def get_random(self):
-        return random
+        return random.randint
 
     def get_categories(self):
         return CATEGORIES

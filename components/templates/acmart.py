@@ -6,13 +6,24 @@ ACM_FILE = "acmart_"
 class ACMART(TexTemplate):
 
     def __init__(self, master=TexTemplate):
+        # Template tools for generating content
+        self.randint = self.get_random()
+        #self.gen = self.get_generator()
+
+        # The latex articles generally have different styles
+        # and parameters, most of the times they are explicitely
+        # cited in the tex default file, but can also be found
+        # on the cls file.
+        #
+        # Only use styles that are for A4 templates, comment the
+        # templates not used on the side.
         self.styles = ["manuscript", "acmsmall", "acmlarge", "acmtog", \
             "acmconf", "sigchi", "sigplan"] #sigchi-a not suited
         
         self.parameters = ["anonymous", "review", \
             "authorversion", "screen", "authordraft"]
 
-        self.CATEGORIES = master.get_categories(master)
+        self.CATEGORIES = self.get_categories()
         # Here you can edit the categories
         #
         # Add categories specific from this template
@@ -21,7 +32,7 @@ class ACMART(TexTemplate):
         #
         # Delete default categories this template does not support
         # self.CATEGORIES.remove(["images", "n"])
-        # self.CATEGORIES.remove(["images-dec", "n"])
+        # self.CATEGORIES.remove(["images-desc", "n"])
         self.CATEGORIES.append(["acm-ref-title", 1])
         self.CATEGORIES.append(["acm-ref", 1])
         self.CATEGORIES.append(["author-affiliation", "n"])
@@ -29,18 +40,10 @@ class ACMART(TexTemplate):
         self.CATEGORIES.append(["ccs", 1])
         self.CATEGORIES.append(["doi", 1])
         
-        self.CLS = ["title", "subtitle", "keywords", "doi", \
-            "ccs", "aux-info", "author-name", "author-affiliation", \
-            "acm-ref", "acm-ref-title", "abstract", "all", "blank"]
-        self.CLS = list(map(lambda c : f"{SRC_PATH}{ACM_FILE}{c}", self.CLS))
-        # self.CLS = list(map(lambda c : self.CLS[c] = f"{SRC_PATH}{ACM_FILE}{c}", self.CATEGORIES))
+        self.CLS = {}
+        list(map(lambda c : self.CLS.update({c[0] : f"{SRC_PATH}{ACM_FILE}{c[0]}"}), self.CATEGORIES))
 
     def create_documentclass(self, style, parameter, category) -> str:
-        #if category == None:
-        #    content = f"""
-        #    \\documentclass[{style}, {parameter}]{{acmart}}
-        #    """
-        #else:
         content = f"""
         \\documentclass[{style}, {parameter}]{{acmart_{category}}}
         """
@@ -171,7 +174,6 @@ class ACMART(TexTemplate):
 
     def create_ccs(self) -> str:
         content = f"""
-
         \\begin{{CCSXML}}
         <ccs2012>
         <concept>
@@ -200,7 +202,7 @@ class ACMART(TexTemplate):
         \\ccsdesc[300]{{Computer systems organization~Redundancy}}
         \\ccsdesc{{Computer systems organization~Robotics}}
         \\ccsdesc[100]{{Networks~Network reliability}}
-
+        
         """
         return content
 

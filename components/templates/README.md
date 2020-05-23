@@ -19,14 +19,11 @@ Create it using the "Open as Template" and share it with pyrrhicbuddha@gmail.com
 If you are at the .tex file, to add a package you write <strong>\usepackage{name_of_package}</strong> after the \documentclass line. If you are 
 at the .cls file you need to write <strong>\RequirePackage{name_of_package}</strong>, write it along with the others \RequirePackage that are already
 in the beginning of the file.</p>
-<p>Here are some of the packages I am using, there are probably more and when we find them they will probably help us to have more 
-flexibility.</p>
+<p>Those are the packages we will be using:</p>
 <ul>
 <li>\fbox - Used for one line text boxes</li>
-<li>\begin{framed} - Used for paragraphs, images, tables, etc</li>
+<li>\begin{framed} - Used for images, tables, etc</li>
 <li>\begin{mdframed} - Same as framed</li>
-<li>\frame - Used for everything, has no padding, but I don't know if it can be edited (so no blank style...)</li>
- <li>\framebox - Same as frame but with some extra difficulties.</li>
 </ul>
 <p>To create a full boxed pdf you need to wrap the content with those packages. You start first trying to put a box around the content <strong>directly
 from the .tex file</strong>, if the box does not work, it means you have to go to the .cls file, find where that type of content is instantiated,
@@ -82,7 +79,7 @@ pdfdisplaydoc<strong>title</strong>, then you can rapidly discard it from the po
 <p>This is the mktitle. As it shows it just decides which version of mktitle it will use (i, iii or iv), dependending on the
 template style (acmsmall, acmlarge, sigplan...). <strong>This is important!</strong> It means that there are three different ways
 of instantiating the title in the document, depending on the template style used. Since we will be using all styles and parameters
-available on each template, it means <strong>we have to edit each mktitle version</strong>.</p>
+available on each template, it means <strong>we have to edit each mktitle version</strong>. But there is also another thing, mktitle@iv is used for sigchi-a template, which is not an A4 PDF format! So we won't be using this version on our system.</p>
 <p>This is the mktitle@iii:</p>
 
 ```
@@ -118,19 +115,38 @@ available on each template, it means <strong>we have to edit each mktitle versio
 
 <p>We can see that the title is intantiated as \@title right after  \parbox[t]{\@ACM@title@width}{\centering\@titlefont. As we are
 talking about a line of text, it can be intuitive to put a \fbox around it. But we must think more! Maybe the title is long 
-enough to actually become two lines, we need to use framed or mdframed then.</p>
+enough to actually become two lines, so the normal \fbox won't work. Actually, we have to create a new version of \fbox which can break lines and can have a different color (so later we can have a frame around the content which is white, when we use detect shapes the 
+ layout won't change since all frames are there, but it won't see the white boxes and get only the frame we want it to find).</p>
 <p>This is how mktitle@iii (zoomed a little bit) needs to be edited:</p>
 
 ```
 \parbox[t]{\@ACM@title@width}{\centering\@titlefont
-        \begin{framed}
+        \cfbox{black}{
         \@title
-        \end{framed}
+        }
         \ifx\@subtitle\@empty\else
           \par\noindent{\@subtitlefont\@subtitle}
         \fi
       }%
 ```
+
+<p>And \cfbox{}{} is created in the beginning of the file as:</p>
+
+```
+\newcommand{\cfbox}[2]{%
+    {\color{#1}%
+    \setlength\fboxsep{0pt}\hspace{-3mm}\fbox{
+        \begin{varwidth}{\dimexpr\columnwidth-2\fboxsep\itshape}
+        {
+          \leavevmode\color{black}#2%
+        }
+        \end{varwidth}%
+      }
+    }
+}
+```
+
+</p>Also, we are using varwidth package, we need to add \RequirePackage{varwidth} to the beginning of the file.</p>
 
 <h4>An advanced example</h4>
 

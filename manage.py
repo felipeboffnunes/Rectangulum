@@ -51,8 +51,7 @@ def main(n, b):
                 os.chdir(path)
                 tex_names = list(map( \
                     lambda tex_category : download_tex(idx, tex_category[0], tex_category[1], tex_category[3]), tex_categories \
-                    ))
-                
+                    )) 
 
                 tex_paths = list(map( \
                     lambda tex_name : f"{path}\\{tex_name}", tex_names \
@@ -80,7 +79,13 @@ def main(n, b):
                             try:
                                 os.rename(f.path, f"{PDF_PATH}\\{f.name}".replace("_blank_0", ""))
                             except:
-                                os.remove(f.path)            
+                                os.remove(f.path)
+                        elif "_all_n.pdf" in f.name:
+                            # Move the all boxed pdf to /results/pdf folder
+                                try:
+                                    os.rename(f.path, f"{PDF_PATH}\\{f.name}".replace("_all_n", "_box"))
+                                except:
+                                    os.remove(f.path)       
                         elif ".pdf" in f.name:
                             # Tranforms PDFs in separate pages as PIL Images
                             pages = convert_from_path(f.path, output_folder=path)
@@ -97,6 +102,8 @@ def main(n, b):
                             for z, page in enumerate(coordinates):
                                 for i, coordinate in enumerate(page):
                                     x, y, w, h = coordinate
+                                    if w < 4 or h < 4:
+                                        continue
                                     area = w * h
                                     bigger.append([area, z, i])
                             bigger.sort(reverse=True)
@@ -111,9 +118,9 @@ def main(n, b):
                                 json_coordinates[idx][category] = filtered_coordinates 
                             else:
                                 json_coordinates[idx] = {category : filtered_coordinates}
-                            os.rename(f.path, f"{PDF_PATH}\\{f.name}")
-
                             
+                            # Uncomment to see all pdfs created
+                            #os.rename(f.path, f"{PDF_PATH}\\{f.name}")
 
                 # Write coordinates to json
                 os.chdir(JSON_PATH)
@@ -127,7 +134,7 @@ if __name__ == "__main__":
     parser.add_argument("--n", type = int, default = 10, \
         required = False, action = "store", \
         help = "Number of pdfs to create.")
-    parser.add_argument("--b", type = int, default = 5, \
+    parser.add_argument("--b", type = int, default = 1, \
         required = False, action = "store", \
         help = "Batch size (less means slower but also less overhead).")
     

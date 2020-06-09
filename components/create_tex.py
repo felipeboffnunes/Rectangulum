@@ -23,22 +23,6 @@ def create_all_tex(template, layout) -> list:
     return all_tex
 
 def create_tex(template, style, parameter, category, layout) -> str:
-    if "title-section" in category:
-        ts_box = "cfboxa"
-        p_box = "tfboxa"
-        a_box = "tfboxa"
-    elif "text" in category:
-        ts_box = "tfboxa"
-        p_box = "cfboxa"
-        a_box = "tfboxa"
-    elif "abstract" in category:
-        ts_box = "tfboxa"
-        p_box = "tfboxa"
-        a_box = "cfboxa"
-    else:
-        ts_box = "tfboxa"
-        p_box = "tfboxa"
-        a_box = "tfboxa"
 
     # Needs dynamic logic
     layout = ""
@@ -61,8 +45,8 @@ def create_tex(template, style, parameter, category, layout) -> str:
     layout += dedent(template.create_keywords())
     layout += dedent(template.create_maketitle())
 
-    layout += dedent(template.create_begin_section(ts_box))
-    layout += dedent(template.create_paragraph(p_box))
+    layout += dedent(template.create_begin_section("cfbox" if category == "title-section" else "tfbox"))
+    layout += dedent(template.create_paragraph("cfbox" if category == "text" else "tfbox"))
     layout += dedent(template.create_table())
     
     layout += dedent(template.print_references())

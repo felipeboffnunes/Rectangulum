@@ -5,7 +5,7 @@ ACM_FILE = "acmart_"
 
 # Write here all categories that use a CLS file.
 AS_CLS = ["title", "subtitle", "abstract", "author-name", "author-affiliation", \
-    "aux-info", "ccs", "doi", "keywords", "acm-ref", "acm-ref-title", "blank"]
+    "aux-info", "ccs", "doi", "keywords", "acm-ref", "acm-ref-title", "blank", "all"]
 
 class ACMART(TexTemplate):
 
@@ -47,10 +47,15 @@ class ACMART(TexTemplate):
         self.CLS = {}
         list(map(lambda c : self.CLS.update({c : f"{SRC_PATH}{ACM_FILE}{c}"}), AS_CLS))
 
-    def create_documentclass(self, style, parameter, category) -> str:
-        content = f"""
-        \\documentclass[{style}, natbib=false, {parameter}]{{acmart_{category}}}
-        """
+    def create_documentclass(self, style, parameter, category=None) -> str:
+        if category == None:
+            content = f"""
+            \\documentclass[{style}, natbib=false, {parameter}]{{acmart}}
+            """ 
+        else:
+            content = f"""
+            \\documentclass[{style}, natbib=false, {parameter}]{{acmart_{category}}}
+            """
         return content
 
     def create_usepackage(self) -> str:

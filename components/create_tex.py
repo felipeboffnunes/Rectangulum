@@ -5,8 +5,7 @@ def create_all_tex(template, layout) -> list:
     style = template.styles[randint(0,len(template.styles)-1)]
     parameter = template.parameters[randint(0,len(template.parameters)-1)]
     
-    # First create_tex is the original tex, without categories
-    all_tex = [[create_tex(template, style, parameter, "blank", 0), "original", template.CLS["blank"], 0]]
+    all_tex = []
     for category, _ in template.CATEGORIES:
         n = layout[category]
         cls = False
@@ -18,7 +17,7 @@ def create_all_tex(template, layout) -> list:
                break
         if not cls:
            category_path = template.CLS["blank"]
-           all_tex.append([create_tex(template, style, parameter, category, layout), category, category_path, n])
+           all_tex.append([create_tex(template, style, parameter, "blank", layout), category, category_path, n])
            cls = False
         
     return all_tex
@@ -64,7 +63,8 @@ def create_tex(template, style, parameter, category, layout) -> str:
 
     layout += dedent(template.create_begin_section(ts_box))
     layout += dedent(template.create_paragraph(p_box))
-
+    layout += dedent(template.create_table())
+    
     layout += dedent(template.print_references())
 
     layout += dedent(template.create_end_document())

@@ -3,6 +3,10 @@ from components.tex_template import TexTemplate
 SRC_PATH = "./data/template_src/acm/"
 ACM_FILE = "acmart_"
 
+# Write here all categories that use a CLS file.
+AS_CLS = ["title", "subtitle", "abstract", "author-name", "author-affiliation", \
+    "aux-info", "ccs", "doi", "keywords", "acm-ref", "acm-ref-title", "blank"]
+
 class ACMART(TexTemplate):
 
     def __init__(self, master=TexTemplate):
@@ -11,7 +15,7 @@ class ACMART(TexTemplate):
         #self.gen = self.get_generator()
 
         # The latex articles generally have different styles
-        # and parameters, most of the times they are explicitely
+        # and parameters, most of the times they are explicitly
         # cited in the tex default file, but can also be found
         # on the cls file.
         #
@@ -41,11 +45,11 @@ class ACMART(TexTemplate):
         self.CATEGORIES.append(["doi", 1])
         
         self.CLS = {}
-        list(map(lambda c : self.CLS.update({c[0] : f"{SRC_PATH}{ACM_FILE}{c[0]}"}), self.CATEGORIES))
+        list(map(lambda c : self.CLS.update({c : f"{SRC_PATH}{ACM_FILE}{c}"}), AS_CLS))
 
     def create_documentclass(self, style, parameter, category) -> str:
         content = f"""
-        \\documentclass[{style}, {parameter}]{{acmart_{category}}}
+        \\documentclass[{style}, natbib=false, {parameter}]{{acmart_{category}}}
         """
         return content
 
@@ -109,7 +113,7 @@ class ACMART(TexTemplate):
 
     def create_acm_setup(self) -> str:
         content = f"""
-        \\setcopyright{{acmcopyright}}
+        \\setcopyright{{}}
         \\copyrightyear{{2018}}
         \\acmYear{{2018}}
         \\acmDOI{{10.1145/1122445.1122456}}
@@ -202,7 +206,7 @@ class ACMART(TexTemplate):
         \\ccsdesc[300]{{Computer systems organization~Redundancy}}
         \\ccsdesc{{Computer systems organization~Robotics}}
         \\ccsdesc[100]{{Networks~Network reliability}}
-        
+
         """
         return content
 
@@ -236,6 +240,25 @@ class ACMART(TexTemplate):
         have published with ACM before, this document provides insight and
         instruction into more recent changes to the article template.
         }}
+        """
+        return content
+    
+    def create_table(self) -> str:
+        content = f"""
+        \\begin{{table}}[H]
+        \\caption{{Frequency of Special Characters}}
+        \\label{{tab:freq}}
+        \\begin{{tabular}}{{ccl}}
+            \\toprule
+            Non-English or Math&Frequency&Comments\\\\
+            \\midrule
+            \\O & 1 in 1,000& For Swedish names\\\\
+            $\\pi$ & 1 in 5& Common in math\\\\
+            \\$ & 4 in 5 & Used in business\\\\
+            $\\Psi^2_1$ & 1 in 40,000& Unexplained usage\\\\
+        \\bottomrule
+        \\end{{tabular}}
+        \\end{{table}}
         """
         return content
 

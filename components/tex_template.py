@@ -1,4 +1,4 @@
-from abc import ABCMeta, abstractmethod
+from abc import  ABCMeta, abstractmethod
 import random
 
 CATEGORIES = [["title", 1], ["subtitle", 1], ["abstract", 1], ["aux-info", "n"], \

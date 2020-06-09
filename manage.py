@@ -1,4 +1,6 @@
 # Python Standard Libraries
+from multiprocessing import Pool, cpu_count
+from functools import partial
 import argparse
 import tempfile
 import json
@@ -45,23 +47,27 @@ def main(n, b):
             idx = f"{zeros}{idx}"
             
             with tempfile.TemporaryDirectory() as path:
-                
+                # Write category tex files and get paths
                 os.chdir(path)
                 tex_names = list(map( \
                     lambda tex_category : download_tex(idx, tex_category[0], tex_category[1], tex_category[3]), tex_categories \
                     ))
+                
 
                 tex_paths = list(map( \
                     lambda tex_name : f"{path}\\{tex_name}", tex_names \
                     ))
-        
+
                 # Go to /data/template_src/{template}/ and create PDFs
                 os.chdir(TEMPLATE_PATH)
-                list(map(lambda tex_path: create_pdf(tex_path, path), tex_paths))
+                cpu = cpu_count() - 1
+                create = partial(create_pdf, path=path)
+                with Pool(cpu) as p:
+                    p.map(create, tex_paths)
                 
                 # Move the original tex to /results/tex folder
                 try:
-                    os.rename(tex_paths[0], f"{TEX_PATH}\\{tex_names[0]}".replace("_original_0", ""))
+                    os.rename(tex_paths[0], f"{TEX_PATH}\\{tex_names[0]}".replace("_blank_0", ""))
                 except:
                     os.remove(tex_paths[0])
 
@@ -69,10 +75,10 @@ def main(n, b):
                 # Split PDFs into individual pages
                 with os.scandir(path) as files:
                     for f in files:                    
-                        if "_original_0.pdf" in f.name:
+                        if "_blank_0.pdf" in f.name:
                             # Move the original pdf to /results/pdf folder
                             try:
-                                os.rename(f.path, f"{PDF_PATH}\\{f.name}".replace("_original_0", ""))
+                                os.rename(f.path, f"{PDF_PATH}\\{f.name}".replace("_blank_0", ""))
                             except:
                                 os.remove(f.path)            
                         elif ".pdf" in f.name:
@@ -81,11 +87,10 @@ def main(n, b):
 
                             n_box = re.search("_(\d*n*?)\.pdf$", f.name).group(1) 
                             category = re.search("_(.*?)_\d*n*\.pdf$", f.name).group(1)
-                            idx = re.search("^\d*", f.name).group(0)
 
                             # Use detect_shapes(page, visual=True)
                             # to see the bounding boxes found
-                            coordinates = list(map(lambda page : detect_shapes(page, visual=True), pages))
+                            coordinates = list(map(lambda page : detect_shapes(page, visual=False), pages))
 
                             # Delete the smallest boxes
                             bigger = []
@@ -106,7 +111,11 @@ def main(n, b):
                                 json_coordinates[idx][category] = filtered_coordinates 
                             else:
                                 json_coordinates[idx] = {category : filtered_coordinates}
+                            os.rename(f.path, f"{PDF_PATH}\\{f.name}")
 
+                            
+
+                # Write coordinates to json
                 os.chdir(JSON_PATH)
                 with open(f"{idx}.json", "w") as j:
                     j.write(json.dumps(json_coordinates))
@@ -120,7 +129,7 @@ if __name__ == "__main__":
         help = "Number of pdfs to create.")
     parser.add_argument("--b", type = int, default = 5, \
         required = False, action = "store", \
-        help = "Batch size (less means slower but also less overhead.")
+        help = "Batch size (less means slower but also less overhead).")
     
     args = parser.parse_args()
 

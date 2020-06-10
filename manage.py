@@ -42,6 +42,7 @@ def main(n, b):
         # one category with black boxes
         # tex_categories = [tex, category, category_path, n]
         for idx, tex_categories in zip(batch_ids, batch_texs):
+            
             # Format idx (1 becomes 0000001)
             zeros = "0" * (MILLION - len(str(idx)))
             idx = f"{zeros}{idx}"

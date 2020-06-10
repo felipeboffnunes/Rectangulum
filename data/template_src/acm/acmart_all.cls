@@ -65,23 +65,18 @@
 \@DeclareACMFormat{sigchi-a}
 
 \newcommand{\cfbox}[1]{%
-    {\color{black}%
-    \setlength\fboxsep{0pt}\hspace{-3mm}\fbox{
-        \begin{varwidth}{\dimexpr\columnwidth-2\fboxsep\itshape}
-          \leavevmode{
-            \color{black}#1%
-        }
+    {\setlength\fboxsep{0pt}\fbox{%
+        \begin{varwidth}{\dimexpr\columnwidth-2}
+          \leavevmode{\color{black}#1}
         \end{varwidth}
       }
-    }%
+    }
 }
 \newcommand{\tfbox}[1]{%
     {\color{white}%
-    \setlength\fboxsep{0pt}\hspace{-3mm}\fbox{
-        \begin{varwidth}{\dimexpr\columnwidth-2\fboxsep\itshape}
-          \leavevmode{
-            \color{black}#1%
-        }
+    \setlength\fboxsep{0pt}\fbox{
+        \begin{varwidth}{\dimexpr\columnwidth-2}
+          \leavevmode{\color{black}#1}
         \end{varwidth}
       }
     }%

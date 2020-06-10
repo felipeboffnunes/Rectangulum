@@ -47,6 +47,9 @@ class ACMART(TexTemplate):
         self.CLS = {}
         list(map(lambda c : self.CLS.update({c : f"{SRC_PATH}{ACM_FILE}{c}"}), AS_CLS))
 
+    def __repr__(self):
+        return "ACMART"
+
     def create_documentclass(self, style, parameter, category=None) -> str:
         if category == None:
             content = f"""
@@ -71,22 +74,19 @@ class ACMART(TexTemplate):
     def setup_boxes(self) -> str:
         content = f"""
         \\newcommand{{\\cfboxa}}[1]{{%
-        {{\\color{{black}}%
-        \\setlength\\fboxsep{{0pt}}\\hspace{{-3mm}}\\fbox{{
-        \\begin{{varwidth}}{{\\dimexpr\\columnwidth-2\\fboxsep\\itshape}}
-        {{
-        \\color{{black}}#1%
-        }}
-        \\end{{varwidth}}%
-        }}
-        }}
+            {{\\setlength\\fboxsep{{0pt}}\\fbox{{%
+                \\begin{{varwidth}}{{\\dimexpr\\columnwidth-2}}
+                    {{\\leavevmode\\color{{black}}#1}}
+                \\end{{varwidth}}
+                }} 
+            }} 
         }}
         \\newcommand{{\\tfboxa}}[1]{{%
         {{\\color{{white}}%
-        \\setlength\\fboxsep{{0pt}}\\hspace{{-3mm}}\\fbox{{
-        \\begin{{varwidth}}{{\\dimexpr\\columnwidth-2\\fboxsep\\itshape}}
+        \\setlength\\fboxsep{{0pt}}\\fbox{{
+        \\begin{{varwidth}}{{\\dimexpr\\columnwidth-2}}
         {{
-        \\color{{black}}#1
+        \\leavevmode\\color{{black}}#1
         }}
         \\end{{varwidth}}
         }}
@@ -177,8 +177,7 @@ class ACMART(TexTemplate):
         article presents and explains many of the common variations, as well
         as many of the formatting elements an author may use in the
         preparation of the documentation of their work.
-        \\end{{abstract}}
-        """
+        \\end{{abstract}}"""
         return content
 
     def create_ccs(self) -> str:
@@ -221,6 +220,18 @@ class ACMART(TexTemplate):
         """
         return content
 
+    def create_tfbox(self) -> str:
+        content = f"""
+        \\cfboxa{{
+        """
+        return content
+    
+    def end_tfbox(self) -> str:
+        content = f"""
+        }}
+        """
+        return content
+    
     def create_begin_section(self, box) -> str:
         content = f"""
         \\{box}{{
@@ -248,23 +259,26 @@ class ACMART(TexTemplate):
         """
         return content
     
-    def create_table(self) -> str:
+    def create_table(self, box) -> str:
         content = f"""
-        \\begin{{table}}[H]
-        \\caption{{Frequency of Special Characters}}
-        \\label{{tab:freq}}
-        \\begin{{tabular}}{{ccl}}
-            \\toprule
-            Non-English or Math&Frequency&Comments\\\\
-            \\midrule
-            \\O & 1 in 1,000& For Swedish names\\\\
-            $\\pi$ & 1 in 5& Common in math\\\\
-            \\$ & 4 in 5 & Used in business\\\\
-            $\\Psi^2_1$ & 1 in 40,000& Unexplained usage\\\\
-        \\bottomrule
-        \\end{{tabular}}
-        \\end{{table}}
-        """
+        \\{box}{{
+            \\begin{{table}}[H]   
+            \\caption{{Frequency of Special Characters}}  
+            \\label{{tab:freq}}
+            \\{box}{{
+                \\begin{{tabular}}{{ccl}}
+                    \\toprule
+                    Non-English or Math&Frequency&Comments\\\\
+                    \\midrule
+                    \\O & 1 in 1,000& For Swedish names\\\\
+                    $\\pi$ & 1 in 5& Common in math\\\\
+                    \\$ & 4 in 5 & Used in business\\\\
+                    $\\Psi^2_1$ & 1 in 40,000& Unexplained usage\\\\
+                    \\bottomrule
+                \\end{{tabular}}
+            }}
+            \\end{{table}}
+        }}"""
         return content
 
     def print_references(self) -> str:

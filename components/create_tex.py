@@ -1,11 +1,11 @@
 from textwrap import dedent
-from random import randint
+from random import randint, shuffle
 
 def create_all_tex(template, layout) -> list:
     style = template.styles[randint(0,len(template.styles)-1)]
     parameter = template.parameters[randint(0,len(template.parameters)-1)]
     
-    all_tex = []
+    all_tex = [[create_tex(template, style, parameter, "blank", layout), "blank", template.CLS["blank"], 0]]
     for category, _ in template.CATEGORIES:
         n = layout[category]
         cls = False
@@ -15,16 +15,21 @@ def create_all_tex(template, layout) -> list:
                all_tex.append([create_tex(template, style, parameter, category, layout), category, category_path, n])
                cls = True
                break
-        if not cls:
+        if not cls and category != "blank":
            category_path = template.CLS["blank"]
            all_tex.append([create_tex(template, style, parameter, "blank", layout), category, category_path, n])
            cls = False
         
     return all_tex
 
-def create_tex(template, style, parameter, category, layout) -> str:
+def create_tex(template, style, parameter, category, layout_aux) -> str:
 
-    # Needs dynamic logic
+    if repr(template) == "ACMART":
+        layout = create_tex_ACMART(template, style, parameter, category, layout_aux)
+    
+    return layout
+
+def create_tex_ACMART(template, style, parameter, category, layout_aux):
     layout = ""
     if category == None:
         layout += dedent(template.create_documentclass(style, parameter))
@@ -45,9 +50,24 @@ def create_tex(template, style, parameter, category, layout) -> str:
     layout += dedent(template.create_keywords())
     layout += dedent(template.create_maketitle())
 
-    layout += dedent(template.create_begin_section("cfbox" if category == "title-section" else "tfbox"))
-    layout += dedent(template.create_paragraph("cfbox" if category == "text" else "tfbox"))
-    layout += dedent(template.create_table())
+    # Dynamic part
+    random_parts = []
+    for _ in range(layout_aux["section-title"]):
+        part = ""
+        part += dedent(template.create_tfbox())
+        part += dedent(template.create_begin_section("cfboxa" if category == "section-title" or category == "all" else "tfboxa"))
+        part += dedent(template.create_paragraph("cfboxa" if category == "text" or category == "all" else "tfboxa"))
+        part += dedent(template.end_tfbox())
+        random_parts.append(part)
+    
+    for _ in range(layout_aux["tables"]):
+        part = ""
+        part += dedent(template.create_table("cfboxa" if category == "tables" or category == "all" else "tfboxa"))
+        random_parts.append(part)
+        
+    shuffle(random_parts)
+    for part in random_parts:
+        layout += part
     
     layout += dedent(template.print_references())
 

@@ -3,7 +3,7 @@ from faker import Faker
 
 
 def create_table() -> list: 
-    """Generates a matrix table with random random
+    """Generates a matrix table with random data
     
     Returns:
         list: table
@@ -15,9 +15,6 @@ def create_table() -> list:
     
     table = [[generate_data() for row in rows] 
                              for column in columns]
-    
-    for i in table:
-        print(i)
     return table
 
 def generate_data() -> str:
@@ -29,7 +26,7 @@ def generate_data() -> str:
     
     # Data generator
     fake = Faker()
-    fake_types = [fake.file_path, fake.license_plate, fake.color]
+    fake_types = [fake.license_plate, fake.name]
     
     # Select type 
     index = random.choice(fake_types)

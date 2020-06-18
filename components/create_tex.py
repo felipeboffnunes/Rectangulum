@@ -1,5 +1,6 @@
 from textwrap import dedent
 from random import randint, shuffle
+from components.create_table import create_table
 
 def create_all_tex(template, layout) -> list:
     style = template.styles[randint(0,len(template.styles)-1)]
@@ -52,17 +53,17 @@ def create_tex_ACMART(template, style, parameter, category, layout_aux):
 
     # Dynamic part
     random_parts = []
-    for _ in range(layout_aux["section-title"]):
+    for title, text in layout_aux["section-title"]:
         part = ""
         part += dedent(template.create_tfbox())
-        part += dedent(template.create_begin_section("cfboxa" if category == "section-title" or category == "all" else "tfboxa"))
-        part += dedent(template.create_paragraph("cfboxa" if category == "text" or category == "all" else "tfboxa"))
+        part += dedent(template.create_begin_section(title, "cfboxa" if category == "section-title" or category == "all" else "tfboxa"))
+        part += dedent(template.create_paragraph(text, "cfboxa" if category == "text" or category == "all" else "tfboxa"))
         part += dedent(template.end_tfbox())
         random_parts.append(part)
-    
-    for _ in range(layout_aux["tables"]):
+
+    for table in layout_aux["tables"]:
         part = ""
-        part += dedent(template.create_table("cfboxa" if category == "tables" or category == "all" else "tfboxa"))
+        part += dedent(template.create_table(table, "cfboxa" if category == "tables" or category == "all" else "tfboxa"))
         random_parts.append(part)
         
     shuffle(random_parts)

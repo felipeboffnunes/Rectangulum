@@ -51,19 +51,23 @@ def main(n, b):
                 # Write category tex files and get paths
                 os.chdir(path)
                 tex_names = list(map( \
-                    lambda tex_category : download_tex(idx, tex_category[0], tex_category[1], tex_category[3]), tex_categories \
-                    )) 
-
+                    lambda tex_category : download_tex(idx, tex_category[0], tex_category[1], \
+                        tex_category[3] if isinstance(tex_category[3], int) else len(tex_category[3]) ), tex_categories \
+                    ))
+                
                 tex_paths = list(map( \
                     lambda tex_name : f"{path}\\{tex_name}", tex_names \
-                    ))
-
+                ))
+                
                 # Go to /data/template_src/{template}/ and create PDFs
                 os.chdir(TEMPLATE_PATH)
                 cpu = cpu_count() - 1
                 create = partial(create_pdf, path=path)
                 with Pool(cpu) as p:
                     p.map(create, tex_paths)
+                
+                #for tpath in tex_paths:
+                #    create_pdf(tpath, path=path)
                 
                 # Move the original tex to /results/tex folder
                 try:

@@ -76,21 +76,22 @@ class ACMART(TexTemplate):
         \\newcommand{{\\cfboxa}}[1]{{%
             {{\\setlength\\fboxsep{{0pt}}\\fbox{{%
                 \\begin{{varwidth}}{{\\dimexpr\\columnwidth-2}}
-                    {{\\leavevmode\\color{{black}}#1}}
+                    \\begingroup
+                    \\leavevmode\\color{{black}}#1
+                    \\endgroup
                 \\end{{varwidth}}
                 }} 
             }} 
         }}
         \\newcommand{{\\tfboxa}}[1]{{%
-        {{\\color{{white}}%
-        \\setlength\\fboxsep{{0pt}}\\fbox{{
-        \\begin{{varwidth}}{{\\dimexpr\\columnwidth-2}}
-        {{
-        \\leavevmode\\color{{black}}#1
-        }}
-        \\end{{varwidth}}
-        }}
-        }}%
+            {{\\setlength\\fboxsep{{0pt}}\\fbox{{
+                \\begin{{varwidth}}{{\\dimexpr\\columnwidth-2}}
+                    \\begingroup
+                    \\leavevmode\\color{{black}}#1
+                    \\endgroup
+                \\end{{varwidth}}
+                }}
+            }}%
         }}
         """
         return content
@@ -118,7 +119,7 @@ class ACMART(TexTemplate):
 
     def create_acm_setup(self) -> str:
         content = f"""
-        \\setcopyright{{}}
+        \\setcopyright{{none}}
         \\copyrightyear{{2018}}
         \\acmYear{{2018}}
         \\acmDOI{{10.1145/1122445.1122456}}
@@ -232,10 +233,10 @@ class ACMART(TexTemplate):
         """
         return content
     
-    def create_begin_section(self, box) -> str:
+    def create_begin_section(self, title, box) -> str:
         content = f"""
         \\{box}{{
-        \\section{{Introduction}}
+        \\section{{{title}}}
         }}
         """
         return content
@@ -248,18 +249,23 @@ class ACMART(TexTemplate):
         """
         return content
 
-    def create_paragraph(self, box) -> str:
+    def create_paragraph(self, text, box) -> str:
         content = f"""
         \\{box}{{
-        If you are new to publishing with ACM, this document is a valuable
-        guide to the process of preparing your work for publication. If you
-        have published with ACM before, this document provides insight and
-        instruction into more recent changes to the article template.
+        {text}
         }}
         """
         return content
     
-    def create_table(self, box) -> str:
+    def create_table(self, table, box) -> str:
+        rows = []
+        for row in table:
+            row_string = f""""""
+            for column in row:
+                row_string += f"""{column}& """
+            row_string = row_string[:-2]
+            rows.append(row_string)
+            
         content = f"""
         \\{box}{{
             \\begin{{table}}[H]   
@@ -268,12 +274,13 @@ class ACMART(TexTemplate):
             \\{box}{{
                 \\begin{{tabular}}{{ccl}}
                     \\toprule
-                    Non-English or Math&Frequency&Comments\\\\
+                    {rows[0]}\\\\
                     \\midrule
-                    \\O & 1 in 1,000& For Swedish names\\\\
-                    $\\pi$ & 1 in 5& Common in math\\\\
-                    \\$ & 4 in 5 & Used in business\\\\
-                    $\\Psi^2_1$ & 1 in 40,000& Unexplained usage\\\\
+        """
+        for row in rows:
+            content += f"""{row}\\\\\n"""
+        content = content[:-2]
+        content += f"""
                     \\bottomrule
                 \\end{{tabular}}
             }}

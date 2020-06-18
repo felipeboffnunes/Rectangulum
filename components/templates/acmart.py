@@ -37,12 +37,13 @@ class ACMART(TexTemplate):
         # Delete default categories this template does not support
         # self.CATEGORIES.remove(["images", "n"])
         # self.CATEGORIES.remove(["images-desc", "n"])
-        self.CATEGORIES.append(["acm-ref-title", 1])
-        self.CATEGORIES.append(["acm-ref", 1])
-        self.CATEGORIES.append(["author-affiliation", "n"])
-        self.CATEGORIES.append(["keywords", 1])
-        self.CATEGORIES.append(["ccs", 1])
-        self.CATEGORIES.append(["doi", 1])
+        if ["acm-ref-title", 1] not in self.CATEGORIES:
+            self.CATEGORIES.append(["acm-ref-title", 1])
+            self.CATEGORIES.append(["acm-ref", 1])
+            self.CATEGORIES.append(["author-affiliation", "n"])
+            self.CATEGORIES.append(["keywords", 1])
+            self.CATEGORIES.append(["ccs", 1])
+            self.CATEGORIES.append(["doi", 1])
         
         self.CLS = {}
         list(map(lambda c : self.CLS.update({c : f"{SRC_PATH}{ACM_FILE}{c}"}), AS_CLS))
@@ -52,52 +53,57 @@ class ACMART(TexTemplate):
 
     def create_documentclass(self, style, parameter, category=None) -> str:
         if category == None:
-            content = f"""
+            content = f"""%
             \\documentclass[{style}, natbib=false, {parameter}]{{acmart}}
+            %
             """ 
         else:
-            content = f"""
+            content = f"""%
             \\documentclass[{style}, natbib=false, {parameter}]{{acmart_{category}}}
+            %
             """
         return content
 
     def create_usepackage(self) -> str:
-        content = f"""
+        content = f"""%
         \\usepackage{{tikz}}
         \\usetikzlibrary{{tikzmark}}
         \\usetikzlibrary{{calc}}
         \\usepackage[style=ieee,sorting=nty]{{biblatex}}
         \\usepackage{{varwidth}}
+        %
         """
         return content
 
     def setup_boxes(self) -> str:
-        content = f"""
+        content = f"""%
         \\newcommand{{\\cfboxa}}[1]{{%
             {{\\setlength\\fboxsep{{0pt}}\\fbox{{%
                 \\begin{{varwidth}}{{\\dimexpr\\columnwidth-2}}
-                    \\begingroup
+                    {{
                     \\leavevmode\\color{{black}}#1
-                    \\endgroup
+                    }}
                 \\end{{varwidth}}
                 }} 
             }} 
         }}
+        
         \\newcommand{{\\tfboxa}}[1]{{%
             {{\\setlength\\fboxsep{{0pt}}\\fbox{{
                 \\begin{{varwidth}}{{\\dimexpr\\columnwidth-2}}
-                    \\begingroup
+                    {{
                     \\leavevmode\\color{{black}}#1
-                    \\endgroup
+                    }}
                 \\end{{varwidth}}
                 }}
             }}%
         }}
+        %
         """
         return content
 
     def setup_references(self) -> str:
-        content = f"""
+        content = f"""%
         \\addbibresource{{bib.bib}}
         \\newbibmacro*{{infoboxnote}}{{\\printfield[infoboxnote]{{\\notefield}}}}
         \\renewbibmacro*{{finentry}}{{\\finentry\\tikzmark{{\\thefield{{entrykey}}end}}}}
@@ -114,11 +120,12 @@ class ACMART(TexTemplate):
             {{\\highlight{{\\thefield{{entrykey}}}}\\tikzmark{{\\thefield{{entrykey}}beg}}\\usebibmacro{{infoboxnote}}\\bibitemstyle}}%
             {{}}}}
         \\setlength\\bibitemsep{{0.2\\baselineskip}}
+        %
         """
         return content
 
     def create_acm_setup(self) -> str:
-        content = f"""
+        content = f"""%
         \\setcopyright{{none}}
         \\copyrightyear{{2018}}
         \\acmYear{{2018}}
@@ -129,131 +136,103 @@ class ACMART(TexTemplate):
         June 03--05, 2018, Woodstock, NY}}
         \\acmPrice{{15.00}}
         \\acmISBN{{978-1-4503-XXXX-X/18/06}}
+        %
         """
         return content
 
     def create_begin_document(self) -> str:
-        content = f"""
+        content = f"""%
         \\begin{{document}}
+        %
         """
         return content
 
     def create_maketitle(self) -> str:
-        content = f"""
+        content = f"""%
         \\maketitle
+        %
         """
         return content
 
-    def create_title(self) -> str:
-        content = f"""
-        \\title{{Example Title}}
+    def create_title(self, title) -> str:
+        content = f"""%
+        \\title{{{title[0]}}}
+        %
         """
         return content
 
-    def create_author(self) -> str:
-        content = f"""
-        \\author{{Ben Trovato}}
-        \\authornote{{Both authors contributed equally to this research.}}
-        \\email{{trovato@corporation.com}}
-        \\orcid{{1234-5678-9012}}
-        \\author{{G.K.M. Tobin}}
-        \\authornotemark[1]
+    def create_author(self, author) -> str:
+        content = f"""%
+        \\author{{{author["name"]}}}
         \\email{{webmaster@marysville-ohio.com}}
         \\affiliation{{%
-        \\institution{{Institute for Clarity in Documentation}}
-        \\streetaddress{{P.O. Box 1212}}
-        \\city{{Dublin}}
-        \\state{{Ohio}}
-        \\postcode{{43017-6221}}
+        \\institution{{{author["affiliation"]}}}
         }}
+        %
         """
         return content
 
-    def create_abstract(self) -> str:
-        content = f"""
+    def create_abstract(self, abstract) -> str:
+        content = f"""%
         \\begin{{abstract}}
-        A clear and well-documented \LaTeX\ document is presented as an
-        article formatted for publication by ACM in a conference proceedings
-        or journal publication. Based on the ``acmart'' document class, this
-        article presents and explains many of the common variations, as well
-        as many of the formatting elements an author may use in the
-        preparation of the documentation of their work.
-        \\end{{abstract}}"""
-        return content
-
-    def create_ccs(self) -> str:
-        content = f"""
-        \\begin{{CCSXML}}
-        <ccs2012>
-        <concept>
-        <concept_id>10010520.10010553.10010562</concept_id>
-        <concept_desc>Computer systems organization~Embedded systems</concept_desc>
-        <concept_significance>500</concept_significance>
-        </concept>
-        <concept>
-        <concept_id>10010520.10010575.10010755</concept_id>
-        <concept_desc>Computer systems organization~Redundancy</concept_desc>
-        <concept_significance>300</concept_significance>
-        </concept>
-        <concept>
-        <concept_id>10010520.10010553.10010554</concept_id>
-        <concept_desc>Computer systems organization~Robotics</concept_desc>
-        <concept_significance>100</concept_significance>
-        </concept>
-        <concept>
-        <concept_id>10003033.10003083.10003095</concept_id>
-        <concept_desc>Networks~Network reliability</concept_desc>
-        <concept_significance>100</concept_significance>
-        </concept>
-        </ccs2012>
-        \\end{{CCSXML}}
-        \\ccsdesc[500]{{Computer systems organization~Embedded systems}}
-        \\ccsdesc[300]{{Computer systems organization~Redundancy}}
-        \\ccsdesc{{Computer systems organization~Robotics}}
-        \\ccsdesc[100]{{Networks~Network reliability}}
-
+        {abstract[0]}
+        \\end{{abstract}}
+        %
         """
         return content
 
-    def create_keywords(self) -> str:
-        content = f"""
-        \\keywords{{datasets, neural networks, gaze detection, text tagging}}
+    def create_ccs(self, ccs) -> str:
+        content = f"""%
+        {ccs[0]}
+        %
+        """
+        return content.strip()
+
+    def create_keywords(self, keywords) -> str:
+        content = f"""%
+        \\keywords{{{keywords[0]}}}
+        %
         """
         return content
 
     def create_tfbox(self) -> str:
-        content = f"""
+        content = f"""%
         \\cfboxa{{
+        %    
         """
         return content
     
     def end_tfbox(self) -> str:
-        content = f"""
+        content = f"""%
         }}
+        %
         """
         return content
     
     def create_begin_section(self, title, box) -> str:
-        content = f"""
+        content = f"""%
         \\{box}{{
         \\section{{{title}}}
         }}
+        %
         """
         return content
     
     def create_begin_subsection(self, box) -> str:
-        content = f"""
+        content = f"""%
         \\{box}{{
         \\subsection{{sub Introduction}}
         }}
+        %
         """
         return content
 
     def create_paragraph(self, text, box) -> str:
-        content = f"""
+        content = f"""%
         \\{box}{{
         {text}
         }}
+        %
         """
         return content
     
@@ -266,7 +245,7 @@ class ACMART(TexTemplate):
             row_string = row_string[:-2]
             rows.append(row_string)
             
-        content = f"""
+        content = f"""%
         \\{box}{{
             \\begin{{table}}[H]   
             \\caption{{Frequency of Special Characters}}  
@@ -285,18 +264,22 @@ class ACMART(TexTemplate):
                 \\end{{tabular}}
             }}
             \\end{{table}}
-        }}"""
+        }}
+        %
+        """
         return content
 
     def print_references(self) -> str:
-        content = f"""
+        content = f"""%
         \\printbibliography
+        %
         """
         return content
 
     def create_end_document(self) -> str:
-        content = f"""
+        content = f"""%
         \\end{{document}}
         \\endinput
+        %
         """
         return content

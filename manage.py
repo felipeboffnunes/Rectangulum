@@ -42,7 +42,6 @@ def main(n, b):
         # one category with black boxes
         # tex_categories = [tex, category, category_path, n]
         for idx, tex_categories in zip(batch_ids, batch_texs):
-            
             # Format idx (1 becomes 0000001)
             zeros = "0" * (MILLION - len(str(idx)))
             idx = f"{zeros}{idx}"
@@ -52,7 +51,7 @@ def main(n, b):
                 os.chdir(path)
                 tex_names = list(map( \
                     lambda tex_category : download_tex(idx, tex_category[0], tex_category[1], \
-                        tex_category[3] if isinstance(tex_category[3], int) else len(tex_category[3]) ), tex_categories \
+                        tex_category[3]), tex_categories \
                     ))
                 
                 tex_paths = list(map( \
@@ -62,12 +61,12 @@ def main(n, b):
                 # Go to /data/template_src/{template}/ and create PDFs
                 os.chdir(TEMPLATE_PATH)
                 cpu = cpu_count() - 1
-                create = partial(create_pdf, path=path)
+                create = partial(create_pdf, path=path, orpath=TEMPLATE_PATH)
                 with Pool(cpu) as p:
                     p.map(create, tex_paths)
                 
                 #for tpath in tex_paths:
-                #    create_pdf(tpath, path=path)
+                #    create_pdf(tpath, path=path, orpath=TEMPLATE_PATH)
                 
                 # Move the original tex to /results/tex folder
                 try:

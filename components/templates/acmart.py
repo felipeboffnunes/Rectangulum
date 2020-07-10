@@ -78,7 +78,8 @@ class ACMART(TexTemplate):
     def setup_boxes(self) -> str:
         content = f"""%
         \\newcommand{{\\cfboxa}}[1]{{%
-            {{\\setlength\\fboxsep{{0pt}}\\fbox{{%
+            {{\\color{{black}}
+                \\setlength\\fboxsep{{0pt}}\\fbox{{%
                 \\begin{{varwidth}}{{\\dimexpr\\columnwidth-2}}
                     {{
                     \\leavevmode\\color{{black}}#1
@@ -89,7 +90,8 @@ class ACMART(TexTemplate):
         }}
         
         \\newcommand{{\\tfboxa}}[1]{{%
-            {{\\setlength\\fboxsep{{0pt}}\\fbox{{
+            {{\\color{{white}}
+                \\setlength\\fboxsep{{0pt}}\\fbox{{
                 \\begin{{varwidth}}{{\\dimexpr\\columnwidth-2}}
                     {{
                     \\leavevmode\\color{{black}}#1
@@ -197,7 +199,7 @@ class ACMART(TexTemplate):
 
     def create_tfbox(self) -> str:
         content = f"""%
-        \\cfboxa{{
+        \\tfboxa{{
         %    
         """
         return content
@@ -265,6 +267,23 @@ class ACMART(TexTemplate):
             }}
             \\end{{table}}
         }}
+        %
+        """
+        return content
+
+    def create_image(self, image, caption, image_box, caption_box) -> str:
+        content = f"""%
+        \\begin{{figure}}
+        \\lineskip\\fboxrule
+        \\{image_box}{{\\begin{{minipage}}{{\\dimexpr \\textwidth-2\\fboxsep-2\\fboxrule}}
+            \\centering
+            \\includegraphics[width=5cm,height=3cm]{{{image}}}
+        \\end{{minipage}}}}
+        \\{caption_box}{{\\begin{{minipage}}{{\\dimexpr \\textwidth-2\\fboxsep-2\\fboxrule}}
+            \\abovecaptionskip=0pt
+            \\caption{{{caption}}}
+        \\end{{minipage}}}}
+        \\end{{figure}}
         %
         """
         return content

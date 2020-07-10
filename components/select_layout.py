@@ -1,11 +1,16 @@
 from components.templates.acmart import ACMART
 from components.create_table import create_table
 from faker import Faker
+from random import randint, shuffle
+import os
+
+ORIGINAL_PATH = os.getcwd()
+IMG_PATH = f"{ORIGINAL_PATH}\\data\\images"
 
 def select_layout(idx):
     template = ACMART()
     layout = {}
-
+    layout_order_n = 0
     for category, n in template.CATEGORIES:
         if category != "all":
             if n == "n":
@@ -13,8 +18,10 @@ def select_layout(idx):
             layout[category] = n
             if category == "tables":
                 layout[category] = [create_table()] * n
+                layout_order_n += n
             elif category == "section-title":
                 layout[category] = [create_section_title()] * n
+                layout_order_n += n
             elif category == "keywords":
                 layout[category] = [create_keywords(n)]
             elif category == "abstract":
@@ -25,9 +32,15 @@ def select_layout(idx):
                 layout[category] = [create_author()] * n
             elif category == "ccs":
                 layout[category] = [create_ccs()]
+            elif category == "images":
+                layout[category] = create_image(n)
+                layout_order_n += n
             else: layout[category] = []
         else:
             layout[category] = ["n"]
+    layout_order_n = list(range(layout_order_n))
+    shuffle(layout_order_n)
+    layout["layout_order"] = layout_order_n
     return (template, layout)
 
 def create_section_title():
@@ -92,3 +105,11 @@ def create_ccs():
         \\ccsdesc{{Computer systems organization~Robotics}}
         \\ccsdesc[100]{{Networks~Network reliability}}
         """
+        
+def create_image(n):
+    faker = Faker()
+    paths = []
+    for i in range(n):
+        zeros = "0" * (5 - len(str(n)))
+        paths.append([f"{zeros}{i+1}.png", faker.name()])
+    return paths

@@ -6,6 +6,7 @@ import tempfile
 import json
 import os
 import re
+from shutil import copyfile
 # Libraries
 from pdf2image import convert_from_path
 # Components
@@ -27,6 +28,7 @@ def main(n, b):
     TEX_PATH = f"{ORIGINAL_PATH}\\results\\tex"
     PDF_PATH = f"{ORIGINAL_PATH}\\results\\pdf"
     JSON_PATH = f"{ORIGINAL_PATH}\\results\\json"
+    IMG_PATH = f"{ORIGINAL_PATH}\\data\\images"
 
     # Batch iteration
     iterations = n//b
@@ -57,6 +59,12 @@ def main(n, b):
                 tex_paths = list(map( \
                     lambda tex_name : f"{path}\\{tex_name}", tex_names \
                 ))
+               
+                # Copy images to the path
+                os.chdir(TEMPLATE_PATH)
+                for n in range(5):
+                    copyfile(IMG_PATH+"\\0000"+ str(n+1)+ ".png", path+"\\0000" + str(n+1) + ".png")
+                copyfile(IMG_PATH+"\\white.png", path+"\\white.png")
                 
                 # Go to /data/template_src/{template}/ and create PDFs
                 os.chdir(TEMPLATE_PATH)
@@ -65,7 +73,7 @@ def main(n, b):
                 with Pool(cpu) as p:
                     p.map(create, tex_paths)
                 
-                #for tpath in tex_paths:
+                #for tpath in tex_paths:    
                 #    create_pdf(tpath, path=path, orpath=TEMPLATE_PATH)
                 
                 # Move the original tex to /results/tex folder
@@ -73,7 +81,7 @@ def main(n, b):
                     os.rename(tex_paths[0], f"{TEX_PATH}\\{tex_names[0]}".replace("_blank_0", ""))
                 except:
                     os.remove(tex_paths[0])
-
+                    
                 json_coordinates = {}
                 # Split PDFs into individual pages
                 with os.scandir(path) as files:
@@ -111,11 +119,15 @@ def main(n, b):
                                     area = w * h
                                     bigger.append([area, z, i])
                             bigger.sort(reverse=True)
+                            if n_box == "0":
+                                n_box = str(len(bigger))
                             if n_box != "n":
                                 bigger = bigger[:int(n_box)]
+            
                             filtered_coordinates = []
+                
                             for box in bigger:
-                                filtered_coordinates.append(coordinates[box[1]][box[2]])
+                                filtered_coordinates.append([coordinates[box[1]][box[2]], box[1]])
 
                             # Get coordinates
                             if idx in json_coordinates:
